@@ -74,4 +74,4 @@ uk_macro_indicators <- left_join(gdp_cleaned_data, trade_balance_cleaned_data,
                                  by ="date") %>%
   left_join(exchange_rate_cleaned_data, by = "date")
 
-write.csv(uk_macro_indicators, file = "work-data/data-uk.csv")
+write.csv(uk_macro_indicators, file = "work-data/data-uk.csv", row.names = FALSE)
