@@ -1,0 +1,8 @@
+# ==============================================================================
+# Macroeconometrics 
+# This master file runs all programs, create data in work folder and figures.
+# ==============================================================================
+
+# Create figures and tables directory if they do not exist 
+dir.create(file.path(root, "figures"), showWarnings = FALSE)
+dir.create(file.path(root, "tables"), showWarnings = FALSE)
