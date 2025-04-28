@@ -6,5 +6,5 @@
 # Create figures and tables directory if they do not exist 
 dir.create(file.path(root, "figures"), showWarnings = FALSE)
 dir.create(file.path(root, "tables"), showWarnings = FALSE)
-
+dir.create(file.path(root, "work-data"), showWarnings = FALSE)
 

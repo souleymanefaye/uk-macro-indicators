@@ -68,3 +68,10 @@ exchange_rate_cleaned_data <- exchange_rate_raw_data %>%
     date = yearquarter(date)
   ) %>%
   mutate(exchange_rate = as.numeric(exchange_rate))
+
+
+uk_macro_indicators <- left_join(gdp_cleaned_data, trade_balance_cleaned_data, 
+                                 by ="date") %>%
+  left_join(exchange_rate_cleaned_data, by = "date")
+
+write.csv(uk_macro_indicators, file = "work-data/data-uk.csv")
