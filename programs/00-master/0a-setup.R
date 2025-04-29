@@ -21,3 +21,7 @@ library(readr)
 library(dplyr)
 library(lubridate)
 library(tsibble)
+library(patchwork)
+library(zoo) # for quarter year type variables
+library(vars) # package for selecting the optimal lag-order
+library(urca) # package for testing unit roots

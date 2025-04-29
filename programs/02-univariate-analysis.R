@@ -1,20 +1,18 @@
-# ==============================================================================
+# =============================================================================#
 # Macroeconometrics 
 # Analysis
-# ==============================================================================
+# =============================================================================#
 
+# --------------------- I - Preliminary ------------------------------------
 # Clear environment
 rm(list=ls())
-
-#
-#install.packages("patchwork")  
-library(patchwork)
 
 # 
 uk_data <- read_csv("work-data/data-uk.csv", show_col_types = FALSE)
 uk_data$date <- as.Date(as.yearqtr(uk_data$date, format = "%Y Q%q"))
 uk_data$date <- as.yearqtr(uk_data$date, format = "Q%q %Y")
 
+# --------------------- II - Plots ------------------------------------
 ggplot(uk_data, aes(x = date, y = gdp)) +
   geom_line(color = "#2c7bb6", linewidth = 0.8) +
   scale_x_yearqtr(
@@ -104,4 +102,23 @@ ggplot(uk_data, aes(x = date, y = exchange_rate)) +
   )
 
 
-# unit root and stationarity tests 
+# time series
+uk_data_ts <- ts(uk_data[,-1], start(1955), frequency = 4)
+
+# graph
+plot(uk_data_ts)
+ 
+#--------------- III - Unit Root and Stationarity Tests ----------------------
+
+VARselect(uk_data_ts[, "gdp"], lag.max=8) 
+
+summary(ur.df(uk_data_ts[, "gdp"], type="trend", lags=7))
+
+summary(ur.df(uk_data_ts[, "balance_payments"], type="trend", lags=4))
+
+summary(ur.df(uk_data_ts[, "exchange_rate"], type="trend", lags=4)) 
+# deal with NAs
+
+#------------------ IV - Model Estimation  -------------------------------------
+
+#---------------------- V - Forecast  ------------------------------------------
