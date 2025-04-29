@@ -121,4 +121,5 @@ summary(ur.df(uk_data_ts[, "exchange_rate"], type="trend", lags=4))
 
 #------------------ IV - Model Estimation  -------------------------------------
 
+
 #---------------------- V - Forecast  ------------------------------------------
