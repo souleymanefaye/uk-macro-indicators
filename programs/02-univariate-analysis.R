@@ -110,14 +110,19 @@ plot(uk_data_ts)
  
 #--------------- III - Unit Root and Stationarity Tests ----------------------
 
-VARselect(uk_data_ts[, "gdp"], lag.max=8) 
+# Take log
+ln_gdp <- log(uk_data_ts[, "gdp"])
 
-summary(ur.df(uk_data_ts[, "gdp"], type="trend", lags=7))
+# take first-difference
+d1_ln_gdp <- diff(ln_gdp)
 
-summary(ur.df(uk_data_ts[, "balance_payments"], type="trend", lags=4))
 
-summary(ur.df(uk_data_ts[, "exchange_rate"], type="trend", lags=4)) 
-# deal with NAs
+# Unit root and co-integration tests
+
+#VARselect(, lag.max=8) 
+#summary(ur.df(log_gdp, type="trend", lags=7))
+#summary(ur.df(uk_data_ts[, "balance_payments"], type="trend", lags=4))
+#summary(ur.df(uk_data_ts[, "exchange_rate"], type="trend", lags=4)) 
 
 #------------------ IV - Model Estimation  -------------------------------------
 
