@@ -59,7 +59,7 @@ exchange_rate_raw_data <- read_csv(
   ),
   show_col_types = FALSE
 )
-
+  
 exchange_rate_cleaned_data <- exchange_rate_raw_data %>%
   filter(!row_number() %in% c(1:57))  %>%
   filter(!row_number() %in% c(201:802))  %>%

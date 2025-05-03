@@ -104,9 +104,12 @@ ggplot(uk_data, aes(x = date, y = exchange_rate)) +
 
 # time series
 uk_data_ts <- ts(uk_data[,-1], start(1955), frequency = 4)
-
-# graph
-plot(uk_data_ts)
+uk_data_ts <- na.omit(uk_data_ts)
+par(mfrow=c(3,1), mar=c(4, 4, 2, 1)) # Set up plot layout
+plot(uk_data_ts[, "gdp"], main = "UK GDP (Level)", ylab = "Value", xlab="Time")
+plot(uk_data_ts[, "balance_payments"], main = "UK Trade Balance (Level)", ylab = "Value", xlab="Time")
+plot(uk_data_ts[, "exchange_rate"], main = "UK Exchange Rate (Level)", ylab = "Value", xlab="Time")
+par(mfrow=c(1,1)) # Reset plot layout
  
 #--------------- III - Unit Root and Stationarity Tests ----------------------
 
@@ -116,8 +119,25 @@ ln_gdp <- log(uk_data_ts[, "gdp"])
 # take first-difference
 d1_ln_gdp <- diff(ln_gdp)
 
-
 # Unit root and co-integration tests
+
+#
+dataUK_test <- cbind()
+
+# Initialize matrix to store test statistics and critical values
+unit_root_test_lvl <- matrix(0, nrow = 5, ncol = 2)
+
+# Loop through each series and perform ADF test with trend and 4 lags
+for (i in 1:5) {
+  test <- ur.df(dataUS_test1[, i], type = "trend", lags = 4)
+  stat <- test@teststat["tau3"]
+  crit <- test@cval["tau3", "5pct"]
+  unit_root_test_lvl[i, 1] <- stat
+  unit_root_test_lvl[i, 2] <- crit
+}
+
+# View results
+print(unit_root_test_lvl)
 
 #VARselect(, lag.max=8) 
 #summary(ur.df(log_gdp, type="trend", lags=7))
