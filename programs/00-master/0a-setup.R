@@ -18,10 +18,12 @@ tables <- file.path(root, "tables")
 
 # libraries 
 library(readr)
-library(dplyr)
 library(lubridate)
 library(tsibble)
 library(patchwork)
 library(zoo) # for quarter year type variables
 library(vars) # package for selecting the optimal lag-order
 library(urca) # package for testing unit roots
+library(ggplot2)
+library(tseries)   # For time series tests (adf.test, kpss.test)
+library(forecast)  # For ARMA modeling and forecasting (auto.arima, forecast, Acf, Pacf)

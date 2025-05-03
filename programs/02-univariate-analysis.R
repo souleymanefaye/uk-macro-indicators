@@ -113,38 +113,81 @@ par(mfrow=c(1,1)) # Reset plot layout
  
 #--------------- III - Unit Root and Stationarity Tests ----------------------
 
-# Take log
-ln_gdp <- log(uk_data_ts[, "gdp"])
-
-# take first-difference
-d1_ln_gdp <- diff(ln_gdp)
-
-# Unit root and co-integration tests
-
-#
-dataUK_test <- cbind()
-
-# Initialize matrix to store test statistics and critical values
-unit_root_test_lvl <- matrix(0, nrow = 5, ncol = 2)
-
-# Loop through each series and perform ADF test with trend and 4 lags
-for (i in 1:5) {
-  test <- ur.df(dataUS_test1[, i], type = "trend", lags = 4)
-  stat <- test@teststat["tau3"]
-  crit <- test@cval["tau3", "5pct"]
-  unit_root_test_lvl[i, 1] <- stat
-  unit_root_test_lvl[i, 2] <- crit
+# we write down a function to perform tests
+perform_tests <- function(series, series_name) {
+  cat("\n--- Testing:", series_name, "---\n")
+  # Augmented Dickey-Fuller Test (Unit Root; H0: unit root exists)
+  adf_result <- adf.test(series, alternative = "stationary")
+  cat("ADF Test (H0: Unit Root):\n")
+  print(adf_result)
+  
+  # Kwiatkowski-Phillips-Schmidt-Shin Test (Stationarity; H0: series is stationary)
+  kpss_result <- kpss.test(series)
+  cat("\nKPSS Test (H0: Stationarity):\n")
+  print(kpss_result)
+  
+  # Comment: Based on p-values, decide if the series appears stationary or has a unit root.
+  # If non-stationary, consider differencing (e.g., diff(series)) and re-test.
 }
 
-# View results
-print(unit_root_test_lvl)
+perform_tests(uk_data_ts[, "gdp"], "GDP")
+perform_tests(uk_data_ts[, "balance_payments"], "Trade Balance")
+perform_tests(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
-#VARselect(, lag.max=8) 
-#summary(ur.df(log_gdp, type="trend", lags=7))
-#summary(ur.df(uk_data_ts[, "balance_payments"], type="trend", lags=4))
-#summary(ur.df(uk_data_ts[, "exchange_rate"], type="trend", lags=4)) 
+# take first-differences
+gdp_diff <- diff(uk_data_ts[, "gdp"])
+balance_payments_diff <- diff(uk_data_ts[, "balance_payments"])
+exchange_rate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
+# I think it's not good to differentiate rates
+
+perform_tests(na.omit(gdp_diff), "Differenced GDP")
+perform_tests(na.omit(balance_payments_diff), "Differenced Trade Balance")
+perform_tests(na.omit(exchange_rate_diff), "Differenced Exchange Rate")
 
 #------------------ IV - Model Estimation  -------------------------------------
+cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
+# We write down a function to select and estimate the best model
+identify_estimate_arma <- function(series, series_name) {
+  cat("\n--- Analyzing:", series_name, "---\n")
+  
+  target_series <- series 
+  
+  cat("Plotting ACF and PACF...\n")
+  par(mfrow=c(1,2))
+  Acf(target_series, main = paste("ACF for", series_name))
+  Pacf(target_series, main = paste("PACF for", series_name))
+  par(mfrow=c(1,1))
+  cat("Use ACF/PACF plots to suggest potential AR(p), MA(q), or ARMA(p,q) orders.\n")
+  
+  cat("\nEstimating models using auto.arima (AICc selection)...\n")
+  # auto.arima automatically selects the best ARMA model based on information criteria (AICc by default)
+  # Set stationary=TRUE if series is already stationary, FALSE if it needs differencing (auto.arima can handle this)
+  # Set seasonal=FALSE unless seasonality is clearly present and needs modeling
+  best_model <- auto.arima(target_series, stationary = TRUE, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
+  cat("Best model selected by auto.arima:\n")
+  print(summary(best_model))
+  cat("Information Criteria (AICc used for selection):\n")
+  print(best_model$aicc) # Can also check $aic, $bic
+  
+  cat("\nChecking residuals of the selected model...\n")
+  checkresiduals(best_model)
+  # Comment on the ACF/PACF plots and the model selected by auto.arima.
+  # Does the selected model make sense given the ACF/PACF? Are the residuals white noise?
+  return(best_model)
+}
+
+gdp_model <- identify_estimate_arma(uk_data_ts[, "gdp"], "GDP")
+identify_estimate_arma(uk_data_ts[, "balance_payments"], "Trade Balance")
+identify_estimate_arma(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
 #---------------------- V - Forecast  ------------------------------------------
+
+cat("\n1.4 Forecasting (Example: GDP)...\n")
+# Define forecast horizon 
+h <- 8
+
+# Generate forecasts from the selected model
+gdp_forecast <- forecast(gdp_model, h)
+
+plot(gdp_forecast, main = "Forecasts for GDP from ARIMA(1,0,0) Model")
