@@ -178,8 +178,8 @@ identify_estimate_arma <- function(series, series_name) {
 }
 
 gdp_model <- identify_estimate_arma(uk_data_ts[, "gdp"], "GDP")
-identify_estimate_arma(uk_data_ts[, "balance_payments"], "Trade Balance")
-identify_estimate_arma(uk_data_ts[, "exchange_rate"], "Exchange Rate")
+balance_payments_model <- identify_estimate_arma(uk_data_ts[, "balance_payments"], "Trade Balance")
+exchange_rate_model <- identify_estimate_arma(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
 #---------------------- V - Forecast  ------------------------------------------
 
@@ -189,5 +189,9 @@ h <- 8
 
 # Generate forecasts from the selected model
 gdp_forecast <- forecast(gdp_model, h)
+exchange_rate_forecast <- forecast(exchange_rate_model, h)
+balance_payments_forecast <- forecast(balance_payments_model, h)
 
 plot(gdp_forecast, main = "Forecasts for GDP from ARIMA(1,0,0) Model")
+plot(exchange_rate_forecast, main = "Forecasts for Exchange Rate from ARIMA(2,0,0) Model")
+plot(balance_payments_forecast, main = "Forecasts for Balance of Payments from ARIMA(1,0,4) Model")
