@@ -162,8 +162,6 @@ identify_estimate_arma <- function(series, series_name) {
   
   cat("\nEstimating models using auto.arima (AICc selection)...\n")
   # auto.arima automatically selects the best ARMA model based on information criteria (AICc by default)
-  # Set stationary=TRUE if series is already stationary, FALSE if it needs differencing (auto.arima can handle this)
-  # Set seasonal=FALSE unless seasonality is clearly present and needs modeling
   best_model <- auto.arima(target_series, stationary = TRUE, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
   cat("Best model selected by auto.arima:\n")
   print(summary(best_model))
