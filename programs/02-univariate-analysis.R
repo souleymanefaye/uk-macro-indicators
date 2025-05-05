@@ -144,6 +144,9 @@ perform_tests(na.omit(gdp_diff), "Differenced GDP")
 perform_tests(na.omit(balance_payments_diff), "Differenced Trade Balance")
 perform_tests(na.omit(exchange_rate_diff), "Differenced Exchange Rate")
 
+# there are structural breaks find a method to identify
+
+
 #------------------ IV - Model Estimation  -------------------------------------
 cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
