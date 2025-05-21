@@ -34,21 +34,22 @@ perform_tests <- function(series, series_name) {
   cat("\n--- Testing:", series_name, "---\n")
   # Augmented Dickey-Fuller Test (Unit Root; H0: unit root exists)
   adf_result <- adf.test(series, alternative = "stationary")
-  cat("ADF Test (H0: Unit Root (non-stationary)):\n")
+  cat("Augmented Dickey-Fuller Test (H0: Unit Root (non-stationary)):\n")
   print(adf_result)
   
   # Kwiatkowski-Phillips-Schmidt-Shin Test (Stationarity; H0: series is stationary)
   kpss_result <- kpss.test(series)
-  cat("\nKPSS Test (H0: Stationarity):\n")
+  cat("\n Kwiatkowski-Phillips-Schmidt-Shin Test (H0: Stationarity):\n")
   print(kpss_result)
   
   # Elliott, Rothenberg and Stock Unit Root Test
   ers_result <- ur.ers(series, type = "DF-GLS")
-  cat("\nKPSS Test (H0: Unit Root (non-stationary)):\n")
+  cat("\n Elliott, Rothenberg and Stock Test (H0: Unit Root (non-stationary)):\n")
   print(ers_result)
+  
   # Phillips-Perron Test
   pp_result <- pp.test(series)
-  cat("\nKPSS Test (H0: Unit Root (non-stationary)):\n")
+  cat("\n Phillips-Perron Test (H0: Unit Root (non-stationary)):\n")
   print(pp_result)
   
   # Comment: Based on p-values, decide if the series appears stationary or has a unit root.
