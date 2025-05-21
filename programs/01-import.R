@@ -3,9 +3,6 @@
 # Import the time series data from the UK statistical office
 # ==============================================================================
 
-# Clear environment
-rm(list=ls())
-
 
 # import GDP data
 gdp_raw_data <- read_csv(

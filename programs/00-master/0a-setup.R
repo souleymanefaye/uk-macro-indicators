@@ -7,7 +7,8 @@
 rm(list=ls())
 
 # set the WD to a new folder
-root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") 
+#root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
+root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
 
 # subdirectories
 code <- file.path(root, "programs")
@@ -16,17 +17,26 @@ raw <- file.path(root, "raw-data")
 figures <- file.path(root, "figures")
 tables <- file.path(root, "tables")
 
-# libraries 
-library(readr)
-library(lubridate)
-library(tsibble)
-library(patchwork)
-library(zoo) # for quarter year type variables
-library(vars) # package for selecting the optimal lag-order
-library(urca) # package for testing unit roots
-library(ggplot2)
-library(tseries)   # For time series tests (adf.test, kpss.test)
-library(forecast)  # For ARMA modeling and forecasting (auto.arima, forecast, Acf, Pacf)
+
+# Load libraries via pacman
+if (!requireNamespace("pacman", quietly = TRUE))
+  install.packages("pacman")
+
+pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast)
+
+
+# libraries (manual method) 
+#library(readr)
+#library(lubridate)
+#library(tsibble)
+#library(patchwork)
+#library(tidyverse) 
+#library(zoo) # for quarter year type variables
+#library(vars) # package for selecting the optimal lag-order
+#library(urca) # package for testing unit roots
+#library(ggplot2)
+#library(tseries)   # For time series tests (adf.test, kpss.test)
+#library(forecast)  # For ARMA modeling and forecasting (auto.arima, forecast, Acf, Pacf)
 
 # functions
 # we write down a function to perform tests

@@ -3,9 +3,6 @@
 # Analysis
 # =============================================================================#
 
-# --------------------- I - Preliminary ------------------------------------
-# Clear environment
-rm(list=ls())
 
 # use stationary time series data
 
