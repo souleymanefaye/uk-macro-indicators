@@ -123,9 +123,9 @@ gdp_diff <- diff(uk_data_ts[, "gdp"])
 balance_payments_diff <- diff(uk_data_ts[, "balance_payments"])
 exchange_rate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
 
-perform_tests(na.omit(gdp_diff), "Differenced GDP")
-perform_tests(na.omit(balance_payments_diff), "Differenced Trade Balance")
-perform_tests(na.omit(exchange_rate_diff), "Differenced Exchange Rate")
+perform_tests(gdp_diff, "Differenced GDP")
+perform_tests(balance_payments_diff, "Differenced Trade Balance")
+perform_tests(exchange_rate_diff, "Differenced Exchange Rate")
 # The three series are stationary after first-differencing
 
 # save stationary time series data
@@ -151,7 +151,7 @@ uk_data_stationary <- uk_data_stationary[,
   c("Date", names(uk_data_stationary)[1:(ncol(uk_data_stationary)-1)])
   ]
 
-colnames(uk_data_stationary) <- c("First-differenced GDP", 
+colnames(uk_data_stationary) <- c("Date","First-differenced GDP", 
                                   "First-differenced balance of payments", 
                                   "First-differenced exchange rate")
 

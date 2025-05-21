@@ -31,6 +31,7 @@ library(forecast)  # For ARMA modeling and forecasting (auto.arima, forecast, Ac
 # functions
 # we write down a function to perform tests
 perform_tests <- function(series, series_name) {
+  series <- na.omit(series) 
   cat("\n--- Testing:", series_name, "---\n")
   # Augmented Dickey-Fuller Test (Unit Root; H0: unit root exists)
   adf_result <- adf.test(series, alternative = "stationary")
