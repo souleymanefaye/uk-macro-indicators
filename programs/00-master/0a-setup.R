@@ -46,7 +46,7 @@ perform_tests <- function(series, series_name) {
   # Elliott, Rothenberg and Stock Unit Root Test
   ers_result <- ur.ers(series, type = "DF-GLS")
   cat("\n Elliott, Rothenberg and Stock Test (H0: Unit Root (non-stationary)):\n")
-  print(ers_result)
+  print(summary(ers_result))
   
   # Phillips-Perron Test
   pp_result <- pp.test(series)
