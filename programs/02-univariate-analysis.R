@@ -4,10 +4,7 @@
 # =============================================================================#
 
 # --------------------- I - Preliminary ------------------------------------
-# Clear environment
-rm(list=ls())
 
-# 
 uk_data <- read_csv("work-data/data-uk.csv", show_col_types = FALSE)
 uk_data$date <- as.Date(as.yearqtr(uk_data$date, format = "%Y Q%q"))
 uk_data$date <- as.yearqtr(uk_data$date, format = "Q%q %Y")
@@ -104,8 +101,8 @@ ggplot(uk_data, aes(x = date, y = exchange_rate)) +
 
 
 # time series
-uk_data_ts <- ts(uk_data[,-1], start(1955), frequency = 4)
-uk_data_ts <- na.omit(uk_data_ts)
+uk_data_ts <- ts(uk_data[,-1], start=c(1955,1), end= c(2024,4), frequency = 4)
+#uk_data_ts <- na.omit(uk_data_ts)
 par(mfrow=c(3,1), mar=c(4, 4, 2, 1)) # Set up plot layout
 plot(uk_data_ts[, "gdp"], main = "UK GDP (Level)", ylab = "Value", xlab="Time")
 plot(uk_data_ts[, "balance_payments"], main = "UK Trade Balance (Level)", ylab = "Value", xlab="Time")
@@ -125,24 +122,50 @@ perform_tests(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 gdp_diff <- diff(uk_data_ts[, "gdp"])
 balance_payments_diff <- diff(uk_data_ts[, "balance_payments"])
 exchange_rate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
-# I think it's not good to differentiate rates
 
 perform_tests(na.omit(gdp_diff), "Differenced GDP")
 perform_tests(na.omit(balance_payments_diff), "Differenced Trade Balance")
 perform_tests(na.omit(exchange_rate_diff), "Differenced Exchange Rate")
-
-# there are structural breaks find a method to identify
+# The three series are stationary after first-differencing
 
 # save stationary time series data
+uk_data_stationary <- cbind(
+  gdp_diff, balance_payments_diff, exchange_rate_diff
+  )
 
+# extract time index
+time_index <- time(uk_data_stationary) 
+
+# Convert fractional time to year-quarter format
+years <- floor(time_index)
+quarters <- round((time_index - years) * 4) + 1
+
+# Create a date string like "1990 Q1"
+date_labels <- paste0(years, " Q", quarters)
+
+uk_data_stationary <- as.data.frame(uk_data_stationary)
+
+uk_data_stationary$Date <- date_labels
+
+uk_data_stationary <- uk_data_stationary[,
+  c("Date", names(uk_data_stationary)[1:(ncol(uk_data_stationary)-1)])
+  ]
+
+colnames(uk_data_stationary) <- c("First-differenced GDP", 
+                                  "First-differenced balance of payments", 
+                                  "First-differenced exchange rate")
+
+write.csv(uk_data_stationary, "work-data/uk_data_stationary.csv", row.names = FALSE)
 
 #------------------ IV - Model Estimation  -------------------------------------
 cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
 # use function defined in 
-gdp_model <- identify_estimate_arma(uk_data_ts[, "gdp"], "GDP")
-balance_payments_model <- identify_estimate_arma(uk_data_ts[, "balance_payments"], "Trade Balance")
-exchange_rate_model <- identify_estimate_arma(uk_data_ts[, "exchange_rate"], "Exchange Rate")
+
+
+gdp_model <- identify_estimate_arma(gdp_diff, "GDP (first-differenced)")
+balance_payments_model <- identify_estimate_arma(balance_payments_diff, "Trade Balance")
+exchange_rate_model <- identify_estimate_arma(exchange_rate_diff, "Exchange Rate")
 
 #---------------------- V - Forecast  ------------------------------------------
 

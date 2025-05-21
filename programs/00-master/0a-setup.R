@@ -34,7 +34,7 @@ perform_tests <- function(series, series_name) {
   cat("\n--- Testing:", series_name, "---\n")
   # Augmented Dickey-Fuller Test (Unit Root; H0: unit root exists)
   adf_result <- adf.test(series, alternative = "stationary")
-  cat("ADF Test (H0: Unit Root):\n")
+  cat("ADF Test (H0: Unit Root (non-stationary)):\n")
   print(adf_result)
   
   # Kwiatkowski-Phillips-Schmidt-Shin Test (Stationarity; H0: series is stationary)
@@ -42,8 +42,17 @@ perform_tests <- function(series, series_name) {
   cat("\nKPSS Test (H0: Stationarity):\n")
   print(kpss_result)
   
+  # Elliott, Rothenberg and Stock Unit Root Test
+  ers_result <- ur.ers(series, type = "DF-GLS")
+  cat("\nKPSS Test (H0: Unit Root (non-stationary)):\n")
+  print(ers_result)
+  # Phillips-Perron Test
+  pp_result <- pp.test(series)
+  cat("\nKPSS Test (H0: Unit Root (non-stationary)):\n")
+  print(pp_result)
+  
   # Comment: Based on p-values, decide if the series appears stationary or has a unit root.
-  # If non-stationary, consider differencing (e.g., diff(series)) and re-test.
+  # If non-stationary, take first difference and re-test.
 }
 
 # We write down a function to select and estimate the best model
