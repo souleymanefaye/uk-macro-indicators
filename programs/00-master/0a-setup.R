@@ -7,8 +7,8 @@
 rm(list=ls())
 
 # set the WD to a new folder
-#root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
-root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
+root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
+#root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
 
 # subdirectories
 code <- file.path(root, "programs")

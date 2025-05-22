@@ -11,7 +11,7 @@ uk_data$date <- as.yearqtr(uk_data$date, format = "Q%q %Y")
 
 # --------------------- II - Plots ------------------------------------
 cat("\n1.1 Plotting time series in levels...\n")
-ggplot(uk_data, aes(x = date, y = gdp)) +
+gdp_plot <- ggplot(uk_data, aes(x = date, y = gdp)) +
   geom_line(color = "#2c7bb6", linewidth = 0.8) +
   scale_x_yearqtr(
     name = "Year",
@@ -25,7 +25,7 @@ ggplot(uk_data, aes(x = date, y = gdp)) +
     expand = c(0, 0)
   ) +
   labs(
-    title = "UK GDP Over Time (1960–2023)",
+    title = "UK GDP Over Time (1955–2023)",
     caption = "Source: UK Statistical Office."
   ) +
   theme_minimal(base_size = 12) +
@@ -39,10 +39,11 @@ ggplot(uk_data, aes(x = date, y = gdp)) +
     panel.grid.minor = element_blank(),
     plot.background = element_rect(fill = "white", color = NA),
     panel.background = element_rect(fill = "white", color = NA)
-  )
+  ) 
 
+ggsave("figures/gdp_plot.png", gdp_plot, width = 8, height = 5, dpi = 300)
 #
-ggplot(uk_data, aes(x = date, y = balance_payments)) +
+bp_plot <- ggplot(uk_data, aes(x = date, y = balance_payments)) +
   geom_line(color = "#2c7bb6", linewidth = 0.8) +
   scale_x_yearqtr(
     name = "Year",
@@ -54,7 +55,7 @@ ggplot(uk_data, aes(x = date, y = balance_payments)) +
     name = "Balance of Payments (in millions of GBP)"
   ) +
   labs(
-    title = "UK Balance of Payments Over Time (1960–2024)",
+    title = "UK Balance of Payments Over Time (1955–2024)",
     caption = "Source: UK Statistical Office."
   ) +
   theme_minimal(base_size = 12) +
@@ -70,8 +71,10 @@ ggplot(uk_data, aes(x = date, y = balance_payments)) +
     panel.background = element_rect(fill = "white", color = NA)
   )
 
+ggsave("figures/bop_plot.png", bop_plot, width = 8, height = 5, dpi = 300)
+
 #
-ggplot(uk_data, aes(x = date, y = exchange_rate)) +
+exchange_plot <- ggplot(uk_data, aes(x = date, y = exchange_rate)) +
   geom_line(color = "#2c7bb6", linewidth = 0.8) +
   scale_x_yearqtr(
     name = "Year",
@@ -99,16 +102,27 @@ ggplot(uk_data, aes(x = date, y = exchange_rate)) +
     panel.background = element_rect(fill = "white", color = NA)
   )
 
+ggsave("figures/exchange_plot.png", exchange_plot, width = 8, height = 5, dpi = 300)
+
 
 # time series
 uk_data_ts <- ts(uk_data[,-1], start=c(1955,1), end= c(2024,4), frequency = 4)
 #uk_data_ts <- na.omit(uk_data_ts)
-par(mfrow=c(3,1), mar=c(4, 4, 2, 1)) # Set up plot layout
+
+png("figures/uk_levels_base_plot.png", width = 1400, height = 900)
+
+par(mfrow=c(2,2), mar=c(4, 4, 2, 1)) # Set up plot layout
 plot(uk_data_ts[, "gdp"], main = "UK GDP (Level)", ylab = "Value", xlab="Time")
 plot(uk_data_ts[, "balance_payments"], main = "UK Trade Balance (Level)", ylab = "Value", xlab="Time")
 plot(uk_data_ts[, "exchange_rate"], main = "UK Exchange Rate (Level)", ylab = "Value", xlab="Time")
 par(mfrow=c(1,1)) # Reset plot layout
- 
+
+dev.off()
+
+# Take first differene here and add graph for it
+
+# Filter and add graph
+
 #--------------- III - Unit Root and Stationarity Tests ----------------------
 
 cat("\n1.2 Unit Root & Stationarity Tests...\n")
@@ -120,17 +134,17 @@ perform_tests(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
 # take first-differences
 gdp_diff <- diff(uk_data_ts[, "gdp"])
-balance_payments_diff <- diff(uk_data_ts[, "balance_payments"])
-exchange_rate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
+bp_diff <- diff(uk_data_ts[, "balance_payments"])
+erate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
 
 perform_tests(gdp_diff, "Differenced GDP")
-perform_tests(balance_payments_diff, "Differenced Trade Balance")
-perform_tests(exchange_rate_diff, "Differenced Exchange Rate")
+perform_tests(bp_diff, "Differenced Trade Balance")
+perform_tests(erate_diff, "Differenced Exchange Rate")
 # The three series are stationary after first-differencing
 
 # save stationary time series data
 uk_data_stationary <- cbind(
-  gdp_diff, balance_payments_diff, exchange_rate_diff
+  gdp_diff, bp_diff, erate_diff
   )
 
 # extract time index
@@ -164,20 +178,93 @@ cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
 
 gdp_model <- identify_estimate_arma(gdp_diff, "GDP (first-differenced)")
-balance_payments_model <- identify_estimate_arma(balance_payments_diff, "Trade Balance")
-exchange_rate_model <- identify_estimate_arma(exchange_rate_diff, "Exchange Rate")
+bp_model <- identify_estimate_arma(bp_diff, "Trade Balance")
+erate_model <- identify_estimate_arma(erate_diff, "Exchange Rate")
 
 #---------------------- V - Forecast  ------------------------------------------
 
 cat("\n1.4 Forecasting (Example: GDP)...\n")
 # Define forecast horizon 
-h <- 8
+h <- 20
 
 # Generate forecasts from the selected model
 gdp_forecast <- forecast(gdp_model, h)
-exchange_rate_forecast <- forecast(exchange_rate_model, h)
-balance_payments_forecast <- forecast(balance_payments_model, h)
+erate_forecast <- forecast(erate_model, h)
+bp_forecast <- forecast(bp_model, h)
 
-plot(gdp_forecast, main = "Forecasts for GDP from ARIMA(1,0,0) Model")
-plot(exchange_rate_forecast, main = "Forecasts for Exchange Rate from ARIMA(2,0,0) Model")
-plot(balance_payments_forecast, main = "Forecasts for Balance of Payments from ARIMA(1,0,4) Model")
+#plot(gdp_forecast, main = "Forecasts for GDP from ARIMA(1,0,0) Model")
+#plot(exchange_rate_forecast, main = "Forecasts for Exchange Rate from ARIMA(2,0,0) Model")
+#plot(balance_payments_forecast, main = "Forecasts for Balance of Payments from ARIMA(1,0,4) Model")
+
+cat("In-sample performance for GDP:\n")
+
+fitted_values_gdp <- fitted(gdp_forecast)
+
+print(accuracy(gdp_forecast))
+
+par(mfrow=c(1,1)) # Reset plot layout if needed
+plot(gdp_forecast$x, col = "black", ylab = "GDP Value", 
+     main = "GDP: Actual vs. In-sample Fitted Values",
+     ylim = range(c(gdp_forecast$x, fitted_values_gdp), na.rm = TRUE))
+lines(fitted_values_gdp, col = "blue", lty = 2)
+legend("topleft", legend = c("Actual GDP", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
+cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
+cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
+
+cat("\nOut-of-sample forecasts for GDP:\n")
+# The `plot(forecast_object)` shows both historical data and out-of-sample forecasts.
+plot(gdp_forecast, main = paste("GDP Forecasts from", gdp_model$method))
+abline(v = time(gdp_forecast$x)[length(gdp_forecast$x)], lty = 3, col = "gray") # Mark end of actuals
+cat("The plot above shows the historical GDP data, the out-of-sample point forecasts for the next", h, "periods, and their prediction intervals.\n")
+cat("Out-of-sample point forecasts:\n")
+print(gdp_forecast$mean)
+
+
+cat("\n--- Trade Balance Forecasting ---\n")
+
+cat("In-sample performance for Trade Balance:\n")
+
+fitted_values_bp <- fitted(bp_forecast)
+
+print(accuracy(bp_forecast))
+
+par(mfrow=c(1,1)) # Reset plot layout if needed
+plot(bp_forecast$x, col = "black", ylab = "Trade Balance (first-difference)", 
+     main = "Trade Balance: Actual vs. In-sample Fitted Values",
+     ylim = range(c(bp_forecast$x, fitted_values_bp), na.rm = TRUE))
+lines(fitted_values_bp, col = "blue", lty = 2)
+legend("topleft", legend = c("Actual Trade Balance", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
+cat("The plot above shows the original Trade Balance series and the in-sample fitted values from the ARIMA model.\n")
+cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
+
+cat("\nOut-of-sample forecasts for Trade Balance:\n")
+# The `plot(forecast_object)` shows both historical data and out-of-sample forecasts.
+plot(bp_forecast, main = paste("Trade balance Forecasts from", bp_model$method))
+abline(v = time(bp_forecast$x)[length(bp_forecast$x)], lty = 3, col = "gray") # Mark end of actuals
+cat("The plot above shows the historical Trade Balance data, the out-of-sample point forecasts for the next", h, "periods, and their prediction intervals.\n")
+cat("Out-of-sample point forecasts:\n")
+print(bp_forecast$mean)
+
+# --- Exchange Rate Forecasting ---
+cat("\n--- Exchange Rate Forecasting ---\n")
+
+cat("In-sample performance for Exchange Rate:\n")
+fitted_values_erate <- fitted(erate_forecast)
+
+print(accuracy(erate_forecast))
+
+par(mfrow=c(1,1)) # Reset plot layout if needed
+plot(erate_forecast$x, col = "black", ylab = "Average Sterling Exchange Rate (First-Differenced)", 
+     main = "Exchange Rate: Actual vs. In-sample Fitted Values",
+     ylim = range(c(erate_forecast$x, fitted_values_erate), na.rm = TRUE))
+lines(fitted_values_erate, col = "blue", lty = 2)
+legend("topleft", legend = c("Actual Average Sterling Exchange Rate", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
+cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
+cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
+
+cat("\nOut-of-sample forecasts for exchange rate:\n")
+plot(erate_forecast, main = paste("Exchange rate Forecasts from", erate_model$method))
+abline(v = time(erate_forecast$x)[length(erate_forecast$x)], lty = 3, col = "gray") # Mark end of actuals
+cat("The plot above shows the historical trade balance data, the out-of-sample point forecasts for the next", h, "periods, and their prediction intervals.\n")
+cat("Out-of-sample point forecasts:\n")
+print(erate_forecast$mean)
