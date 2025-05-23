@@ -133,6 +133,11 @@ perform_tests(uk_data_ts[, "gdp"], "GDP")
 perform_tests(uk_data_ts[, "balance_payments"], "Trade Balance")
 perform_tests(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
+
+perform_tests_new(uk_data_ts[, "gdp", drop = TRUE], "GDP")
+perform_tests_new(uk_data_ts[, "balance_payments", drop = TRUE], "Trade Balance")
+perform_tests_new(uk_data_ts[, "exchange_rate", drop = TRUE], "Exchange Rate")
+
 # take first-differences
 gdp_diff <- diff(uk_data_ts[, "gdp"])
 bp_diff <- diff(uk_data_ts[, "balance_payments"])
@@ -142,6 +147,10 @@ perform_tests(gdp_diff, "Differenced GDP")
 perform_tests(bp_diff, "Differenced Trade Balance")
 perform_tests(erate_diff, "Differenced Exchange Rate")
 # The three series are stationary after first-differencing
+
+perform_tests_new(gdp_diff, "GDP_diff", out_dir = "results/tables") 
+perform_tests_new(bp_diff, "Trade Balance_diff", out_dir = "results/tables") 
+perform_tests_new(erate_diff, "Exchange Rate_diff", out_dir = "results/tables") 
 
 # save stationary time series data
 uk_data_stationary <- cbind(

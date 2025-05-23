@@ -32,7 +32,7 @@ pacman::p_load(
   tidyverse, knitr, kableExtra, stargazer, tinytex, lmtest, nlme,
   haven, vtable, jtools, gridExtra, sandwich, pander, readxl,
   ggplot2, dplyr, rmarkdown, huxtable, lubridate, forcats, ggthemes,
-  broom, scales, sf, jsonlite, foreign, stringr, gdata, janitor, ivreg
+  broom, scales, sf, jsonlite, foreign, stringr, gdata, readr
 )
 
 # set the WD to a new folder
@@ -67,5 +67,117 @@ knitr::include_graphics(file.path(root, "figures/uk_levels_base_plot.png"))
 
 \subsection*{Part 2: Conducting unit roots and stationarity tests}
 
+In this section, we aim to formally conduct stationarity tests for the series. As explained in the last section, we have reason to doubt that our series are entirely stationary. However, for our analysis, we are relying on stationarity properties of the series. Hence, after identifying the non-stationary series formally, we will conduct the first-difference transformation to obtain stationary series for our analysis.\\
 
+Starting with the non-transformed series, we run a series of tests for each time series separately (\textcolor{red}{Explain the type of tests here!}) \\
+
+\textbf{GDP}: 
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/GDP_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+
+```
+
+\textbf{Trade Balance}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/Trade Balance_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+
+\textbf{Exchange Rate}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/Exchange Rate_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+ \\
+ \textcolor{red}{Interprete these results!} \\
+ 
+Now, let us turn to the first-difference transformations of the time series. \\
+
+
+
+\textbf{GDP}: 
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/GDP_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+
+```
+
+\textbf{Trade Balance}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/Trade Balance_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+
+\textbf{Exchange Rate}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/Exchange Rate_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
 

@@ -152,4 +152,142 @@ shifted the mean of the stationary process downwards.
 
 \subsection*{Part 2: Conducting unit roots and stationarity tests}
 
+In this section, we aim to formally conduct stationarity tests for the
+series. As explained in the last section, we have reason to doubt that
+our series are entirely stationary. However, for our analysis, we are
+relying on stationarity properties of the series. Hence, after
+identifying the non-stationary series formally, we will conduct the
+first-difference transformation to obtain stationary series for our
+analysis.\textbackslash{}
+
+Starting with the non-transformed series, we run a series of tests for
+each time series separately
+(\textcolor{red}{Explain the type of tests here!}) \textbackslash{}
+
+\textbf{GDP}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-2}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -2.530635 & 0.3525184 & NA & NA & NA\\
+KPSS & 4.731673 & 0.0100000 & NA & NA & NA\\
+ERS DF-GLS & 3.073724 & NA & -1.62 & -1.94 & -2.57\\
+PP & -21.532938 & 0.0483211 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Trade Balance}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-3}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -2.2250155 & 0.4812789 & NA & NA & NA\\
+KPSS & 3.3948515 & 0.0100000 & NA & NA & NA\\
+ERS DF-GLS & -0.6723293 & NA & -1.62 & -1.94 & -2.57\\
+PP & -157.4146465 & 0.0100000 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Exchange Rate}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-4}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -2.382354 & 0.4179499 & NA & NA & NA\\
+KPSS & 1.754143 & 0.0100000 & NA & NA & NA\\
+ERS DF-GLS & -1.414941 & NA & -1.62 & -1.94 & -2.58\\
+PP & -13.157562 & 0.3539359 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbackslash{} \textcolor{red}{Interprete these results!}
+\textbackslash{}
+
+Now, let us turn to the first-difference transformations of the time
+series. \textbackslash{}
+
+\textbf{GDP}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-5}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -8.0195142 & 0.01 & NA & NA & NA\\
+KPSS & 0.0864308 & 0.10 & NA & NA & NA\\
+ERS DF-GLS & -7.9411516 & NA & -1.62 & -1.94 & -2.57\\
+PP & -321.6127812 & 0.01 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Trade Balance}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-6}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -8.1714448 & 0.01 & NA & NA & NA\\
+KPSS & 0.0349289 & 0.10 & NA & NA & NA\\
+ERS DF-GLS & -12.9115650 & NA & -1.62 & -1.94 & -2.57\\
+PP & -300.0884288 & 0.01 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Exchange Rate}:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-7}Unit-root and stationarity tests for UK GDP}
+\centering
+\begin{tabular}[t]{lrrrrr}
+\toprule
+\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
+\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
+test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\midrule
+ADF & -5.0408902 & 0.01 & NA & NA & NA\\
+KPSS & 0.0837118 & 0.10 & NA & NA & NA\\
+ERS DF-GLS & -2.1882524 & NA & -1.62 & -1.94 & -2.58\\
+PP & -82.8852407 & 0.01 & NA & NA & NA\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
 \end{document}
