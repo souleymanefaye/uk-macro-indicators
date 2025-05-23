@@ -43,7 +43,7 @@ gdp_plot <- ggplot(uk_data, aes(x = date, y = gdp)) +
 
 ggsave("figures/gdp_plot.png", gdp_plot, width = 8, height = 5, dpi = 300)
 #
-bp_plot <- ggplot(uk_data, aes(x = date, y = balance_payments)) +
+bop_plot <- ggplot(uk_data, aes(x = date, y = balance_payments)) +
   geom_line(color = "#2c7bb6", linewidth = 0.8) +
   scale_x_yearqtr(
     name = "Year",
@@ -121,6 +121,7 @@ dev.off()
 
 # Take first differene here and add graph for it
 
+
 # Filter and add graph
 
 #--------------- III - Unit Root and Stationarity Tests ----------------------
@@ -174,7 +175,7 @@ write.csv(uk_data_stationary, "work-data/uk_data_stationary.csv", row.names = FA
 #------------------ IV - Model Estimation  -------------------------------------
 cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
-# use function defined in 
+# use function defined in "0a-setup.R"
 
 
 gdp_model <- identify_estimate_arma(gdp_diff, "GDP (first-differenced)")

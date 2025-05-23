@@ -1,0 +1,155 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{float}
+\restylefloat{table}
+\let\oldtable\table
+\let\endoldtable\endtable
+\renewenvironment{table}[1][H]{\oldtable[H]}{\endoldtable}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textbf{2025-05-23}}
+\fancyhead[C]{\textbf{Econometrics Problem Set 2}}
+\fancyhead[R]{\textbf{Gereon Staratschek}}
+\fancyfoot[C]{\thepage}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={Macroeconometrics -- UK variables report},
+  pdfauthor={Souleymane Faye \& Gereon Staratschek},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Macroeconometrics -- UK variables report}
+\author{Souleymane Faye \& Gereon Staratschek}
+\date{2025-05-23}
+
+\begin{document}
+\maketitle
+
+\section*{Preliminaries}
+
+In this project, we aim to analyze the development of the Gross Domestic
+Product (GDP), exchange rates, and trade balance of the United Kingdom
+(UK). We collect our data from the OECD open data portal. We use data on
+a quarterly basis, starting latest in 1997. This period covers important
+financial events such as the Global Financial Crisis (GFC) in 2007, the
+Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the
+COVID-19 pandemic from 2020-2022.
+
+\section*{Exercise 1}
+
+\subsection*{Part 1: Analyzing the time series in levels}
+
+Looking at the plain time series data and analyzing the plots, we get
+the following results:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../figures/uk_levels_base_plot} 
+
+}
+
+\caption{Residual diagnostics from ARIMA(1,0,4).}\label{fig:resid-plot}
+\end{figure}
+
+\textbf{GDP}: Data on UK's GDP is available on a quarterly basis
+starting in 1955. GDP exhibits a clear, upwards trend with only a few
+shocks (such as the 2020 COVID-19 oandemic or the 2007 financial crisis)
+interrupting the general trend. Hence, the GDP of the UK is clearly not
+stationary. However, the trend seems to be linear, suggesting that the
+first-differences time series of the GDP might be stationary.
+\textbackslash{}
+
+\textbf{Trade Balance}: As GDP, data on the trade balance is available
+on a quarterly basis starting in 1955. We see that the trade balance
+fluctuates around 0 until the 1990s where a negative trend seems to set
+in continueing until the 2010s, when trade balance starts fluctuating
+around a low, negative value. However, since the observed spikes are
+getting much bigger over time, we also see an increase in fluctuation
+around the respective stationary mean. Hence, the data seems to be
+stationary in the beginning and in the end with a negative trend being
+observed between the 1990s and the 2010s. \textbackslash{}
+
+\textbf{Exchange Rate}: Data on the exchange rate is available since
+1997 on a quarterly basis. It exhibits stationarity between 1997 and
+2007, as well as from 2007 onwards. In 2007, a shock seems to have
+shifted the mean of the stationary process downwards.
+
+\subsection*{Part 2: Conducting unit roots and stationarity tests}
+
+\end{document}
