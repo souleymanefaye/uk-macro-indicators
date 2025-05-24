@@ -22,7 +22,7 @@ tables <- file.path(root, "tables")
 if (!requireNamespace("pacman", quietly = TRUE))
   install.packages("pacman")
 
-pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr)
+pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, dplyr)
 
 
 # libraries (manual method) 
@@ -261,7 +261,7 @@ tidy_test <- function(obj, test_name) {
 
 perform_tests_new <- function(series,
                           series_name,
-                          out_dir = "tables") {    # << folder to save in
+                          out_dir = "tables") {
   dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
   
   series <- na.omit(series)
@@ -294,7 +294,7 @@ perform_tests_new <- function(series,
     tidy_test(ers_result,  "ERS DF-GLS"),
     tidy_test(pp_result,   "PP")
   ) |>
-    relocate(test)                              # nicer column order
+    relocate(test)
   
   # ---- Write to disk -------------------------------------------------------
   file_csv <- file.path(out_dir,
@@ -302,6 +302,71 @@ perform_tests_new <- function(series,
   write_csv(table_out, file_csv)
   
   invisible(table_out)   # return the tibble invisibly so you can keep using it
+}
+
+
+
+identify_estimate_arma_new <- function(series,
+                                   series_name,
+                                   out_dir = "results") {
+  
+  ## ------------------------------------------------------------------
+  ## 0.  House-keeping -------------------------------------------------
+  dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+  
+  ## ------------------------------------------------------------------
+  ## 1.  Exploratory ACF / PACF ---------------------------------------
+  cat("\n--- Analyzing:", series_name, "---\n")
+  cat("Plotting ACF and PACF …\n")
+  
+  png(file = file.path(out_dir,
+                       paste0(series_name, "_ACF_PACF.png")),
+      width = 1200, height = 600, res = 120)
+  par(mfrow = c(1, 2))
+  forecast::Acf(series,  main = paste("ACF –",  series_name))
+  forecast::Pacf(series, main = paste("PACF –", series_name))
+  dev.off()
+  par(mfrow = c(1, 1))        # restore
+  
+  cat("   → saved to",
+      paste0(series_name, "_ACF_PACF.png\n"))
+  
+  ## ------------------------------------------------------------------
+  ## 2.  Automatic ARMA selection -------------------------------------
+  cat("Estimating models with auto.arima (AICc selection) …\n")
+  best_model <- forecast::auto.arima(series,
+                                     stationary   = TRUE,
+                                     seasonal     = FALSE,
+                                     stepwise     = FALSE,
+                                     approximation = FALSE)
+  
+  cat("Best model selected:\n")
+  print(summary(best_model))
+  cat("Information criteria  AICc =", best_model$aicc,
+      "  AIC =", best_model$aic,
+      "  BIC =", best_model$bic, "\n")
+  
+  ## ------------------------------------------------------------------
+  ## 3.  Save coefficient table ---------------------------------------
+  coefs <- broom::tidy(best_model)          # coef, std.error, statistic, p.value
+  coef_file <- file.path(out_dir,
+                         paste0(series_name, "_ARMA_coefs.csv"))
+  readr::write_csv(coefs, coef_file)
+  cat("   → coefficient table written to",
+      basename(coef_file), "\n")
+  
+  ## ------------------------------------------------------------------
+  ## 4.  Residual diagnostics figure ----------------------------------
+  cat("Creating residual-diagnostics plot …\n")
+  png(file = file.path(out_dir,
+                       paste0(series_name, "_residuals.png")),
+      width = 1200, height = 800, res = 120)
+  forecast::checkresiduals(best_model)
+  dev.off()
+  cat("   → residual plot saved to",
+      paste0(series_name, "_residuals.png\n"))
+  
+  invisible(best_model)   
 }
 
 

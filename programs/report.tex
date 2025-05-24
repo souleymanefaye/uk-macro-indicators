@@ -55,6 +55,7 @@
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{5}
 \usepackage{caption}
+\usepackage{subcaption}
 \usepackage{multirow}
 \usepackage{float}
 \restylefloat{table}
@@ -64,7 +65,7 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[L]{\textbf{2025-05-23}}
+\fancyhead[L]{\textbf{2025-05-24}}
 \fancyhead[C]{\textbf{Econometrics Problem Set 2}}
 \fancyhead[R]{\textbf{Gereon Staratschek}}
 \fancyfoot[C]{\thepage}
@@ -96,7 +97,7 @@
 
 \title{Macroeconometrics - UK variables report}
 \author{Souleymane Faye \& Gereon Staratschek}
-\date{2025-05-23}
+\date{2025-05-24}
 
 \begin{document}
 \maketitle
@@ -111,7 +112,7 @@ financial events such as the Global Financial Crisis (GFC) in 2007, the
 Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the
 COVID-19 pandemic from 2020-2022.
 
-\section*{Exercise 1}
+\section*{Exercise 1 -  Univariate Analysis}
 
 \subsection*{Part 1: Analyzing the time series in levels}
 
@@ -254,7 +255,7 @@ PP & -321.6127812 & 0.01 & NA & NA & NA\\
 
 \bgroup \table[H]
 \centering
-\caption{\label{tab:unnamed-chunk-6}Unit-root and stationarity tests for UK GDP}
+\caption{\label{tab:unnamed-chunk-6}Unit-root and stationarity tests for UK Trade Balance}
 \centering
 \begin{tabular}[t]{lrrrrr}
 \toprule
@@ -274,7 +275,7 @@ PP & -300.0884288 & 0.01 & NA & NA & NA\\
 
 \bgroup \table[H]
 \centering
-\caption{\label{tab:unnamed-chunk-7}Unit-root and stationarity tests for UK GDP}
+\caption{\label{tab:unnamed-chunk-7}Unit-root and stationarity tests for UK Exchange Rate}
 \centering
 \begin{tabular}[t]{lrrrrr}
 \toprule
@@ -289,5 +290,331 @@ PP & -82.8852407 & 0.01 & NA & NA & NA\\
 \bottomrule
 \end{tabular}
 \endtable\egroup
+
+\subsection*{Part 3: Model Estimation}
+
+\textbf{GDP}: For the GDP, we use the stationary first-differenced data.
+Our tests suggest an ARIMA(1,0,4) process:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/GDP (first-differenced)_residuals} 
+
+}
+
+\caption{Model estimation - GDP}\label{fig:unnamed-chunk-8}
+\end{figure}
+
+The coefficients of the model are as follows:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-9}Model coefficients GDP}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+term & estimate & std.error\\
+\midrule
+ar1 & 0.4886750 & 0.2015697\\
+ma1 & -0.7703784 & 0.1988893\\
+ma2 & 0.0925464 & 0.0930497\\
+ma3 & 0.1352912 & 0.0747171\\
+ma4 & -0.2405810 & 0.0610664\\
+\addlinespace
+intercept & 1832.9872955 & 232.7539989\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Trade Balance}: For the Trade Balance, we use the stationary
+level data. Our tests suggests an ARIMA(0,0,4) process:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/Trade Balance_residuals} 
+
+}
+
+\caption{Model estimation - Trade Balance}\label{fig:unnamed-chunk-10}
+\end{figure}
+
+The coefficients of the model are as follows:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-11}Model coefficients Trade Balance}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+term & estimate & std.error\\
+\midrule
+ma1 & -0.7749122 & 0.0571450\\
+ma2 & -0.1000937 & 0.0735727\\
+ma3 & -0.0300321 & 0.0804010\\
+ma4 & 0.2784463 & 0.0640672\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\textbf{Exchange rate}: For the Exchange Rate, we use te stationary
+level data. Our tests suggests an ARIMA(1,0,0) process:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/Exchange Rate_residuals} 
+
+}
+
+\caption{Model estimation - Exchange Rate}\label{fig:unnamed-chunk-12}
+\end{figure}
+
+The coefficients of the model are as follows:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-13}Model coefficients Exchange Rate}
+\centering
+\begin{tabular}[t]{lrr}
+\toprule
+term & estimate & std.error\\
+\midrule
+ar1 & 0.2592112 & 0.0921888\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\subsection*{Part 4 - Forecasting}
+
+\textcolor{red}{We should probably focus on one series in the final report, I'll just include all so you can decide}
+
+\textbf{GDP}
+
+The fit of the in-sample GDP prediction is shown in the following
+figure:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/GDP_fitted_vs_actual} 
+
+}
+
+\caption{GDP - in-sample prediction}\label{fig:unnamed-chunk-14}
+\end{figure}
+
+The formal measures of the fit are estimated as:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-15}GDP - accuracy metrics}
+\centering
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
+\midrule
+Training set & -30.63153 & 9021.217 & 3505.39 & -106.5096 & 452.5585 & 0.7699877 & -0.0027098\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+The forecast of the GDP series is:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/GDP_forecast} 
+
+}
+
+\caption{GDP - Forecast}\label{fig:unnamed-chunk-16}
+\end{figure}
+
+\textbf{Trade Balance}:
+
+The in-sample fit of the Trade Balance is described by the following
+metrics:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-17}Trade Balance - accuracy metrics}
+\centering
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
+\midrule
+Training set & -196.0811 & 4513.033 & 2255.195 & Inf & Inf & 0.6855749 & 0.0055908\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+The forecast of the GDP series is:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/Trade Balance_forecast} 
+
+}
+
+\caption{GDP - Forecast}\label{fig:unnamed-chunk-18}
+\end{figure}
+
+\textbf{Exchange Rate}:
+
+The in-sample fit of the Trade Balance is described by the following
+metrics:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-19}Exchange Rate - accuracy metrics}
+\centering
+\begin{tabular}[t]{lrrrrrrr}
+\toprule
+set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
+\midrule
+Training set & -0.0011617 & 0.034616 & 0.0265389 & 137.7543 & 152.9467 & 0.6818584 & -0.0075285\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+The forecast of the GDP series is:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/Exchange Rate_forecast} 
+
+}
+
+\caption{Exchange Rate - Forecast}\label{fig:unnamed-chunk-20}
+\end{figure}
+
+\section*{Exercise 2 - Multivariate Analysis}
+
+\subsection*{Part 1 - Lag selection}
+
+c.f. R script. Different tests suggest different lags as can be seen in
+the following table:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-21}Lag selection}
+\centering
+\begin{tabular}[t]{rrrr}
+\toprule
+AIC(n) & HQ(n) & SC(n) & FPE(n)\\
+\midrule
+7 & 1 & 1 & 7\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+We decide to use a lag of 7, ensuring better forecasting fits at the
+expense of a loss of power.
+
+\subsection*{Part 2 - Residual testing}
+
+The test statistics for the behavior of our residuals are summarized in
+the following table:
+
+\bgroup \table[H]
+\centering
+\caption{\label{tab:unnamed-chunk-22}Residuals tests}
+\centering
+\begin{tabular}[t]{lrrr}
+\toprule
+Test & ChiSq & df & p.value\\
+\midrule
+Serial Correlation & 70.6377 & 45 & 0.0086591\\
+ARCH & 290.9468 & 288 & 0.4403334\\
+Normality & 7261.2574 & 6 & 0.0000000\\
+\bottomrule
+\end{tabular}
+\endtable\egroup
+
+\subsection*{Part 3 - VAR forecasts}
+
+\textcolor{red}{We should probably also add an in-sample forecast as Idann and Kenan did?}
+
+The VAR forecast of the first-differenced GDP is visualized by:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/VAR_forecast2} 
+
+}
+
+\caption{GDP - VAR Forecast}\label{fig:unnamed-chunk-23}
+\end{figure}
+
+\subsection*{Part 4 - Cholesky decomposition}
+
+\subsection*{Part 5 - Impulse response functions}
+
+The impulse response functions for GDP are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.GDP} 
+
+}
+
+\caption{GDP - Shock reactions}\label{fig:unnamed-chunk-24}
+\end{figure}
+
+The impulse response functions for Trade Balance are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.balance.of.payments} 
+
+}
+
+\caption{Trade Balance - Shock reactions}\label{fig:unnamed-chunk-25}
+\end{figure}
+
+The impulse response functions for Exchange Rate are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.exchange.rate} 
+
+}
+
+\caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-26}
+\end{figure}
+
+\subsection*{Part 6: Modify the ordering of the variables}
+
+After modifying the ordering, the IRFs look as follows:
+
+The impulse response functions for GDP are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.GDP} 
+
+}
+
+\caption{GDP - Shock reactions}\label{fig:unnamed-chunk-27}
+\end{figure}
+
+The impulse response functions for Trade Balance are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.balance.of.payments} 
+
+}
+
+\caption{Trade Balance - Shock reactions}\label{fig:unnamed-chunk-28}
+\end{figure}
+
+The impulse response functions for Exchange Rate are depicted as:
+
+\begin{figure}
+
+{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.exchange.rate} 
+
+}
+
+\caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-29}
+\end{figure}
 
 \end{document}
