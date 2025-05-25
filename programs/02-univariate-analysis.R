@@ -222,18 +222,6 @@ acc_df  <- acc_mat |>
 readr::write_csv(acc_df,
                  file.path(root, "tables", "Trade Balance_accuracy_metrics.csv"))
 
-png(filename = file.path(root, "figures/TradeBalance_fitted_vs_actual.png"), 
-    width = 1600, height = 900, res = 150)
-par(mfrow=c(1,1)) # Reset plot layout if needed
-plot(gdp_forecast$x, col = "black", ylab = "GDP Value", 
-     main = "GDP: Actual vs. In-sample Fitted Values",
-     ylim = range(c(gdp_forecast$x, fitted_values_gdp), na.rm = TRUE))
-lines(fitted_values_gdp, col = "blue", lty = 2)
-legend("topleft", legend = c("Actual GDP", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
-cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
-cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
-dev.off()        
-
 
 png(filename = file.path(root, "figures/Trade Balance_forecast.png"), 
     width = 1600, height = 900, res = 150)
