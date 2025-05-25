@@ -10,6 +10,8 @@
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
+  \usepackage{lmodern}
+  
 \else % if luatex or xetex
   \usepackage{unicode-math} % this also loads fontspec
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -83,6 +85,7 @@
 \usepackage[normalem]{ulem}
 \usepackage{makecell}
 \usepackage{xcolor}
+
 \ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
@@ -109,7 +112,7 @@
 \begin{document}
 \maketitle
 
-\section{Preliminaries}
+\section{Introduction}
 
 In this project, we aim to analyze the development of the Gross Domestic
 Product (GDP), exchange rates, and trade balance of the United Kingdom
@@ -363,132 +366,136 @@ MASE: Mean Absolute Scaled Error, ACF1: Lag-1 Autocorrelation.
 \end{minipage}
 \end{table}
 
-\textcolor{red}{We should probably focus on one series in the final report, I'll just include all so you can decide}
+Figure \ref{fig:forecast_results} compares the true quarterly GDP change (black line) to the 
+ARIMA model’s fitted values (dashed blue line). The model seems to fit the real 
+data generally quite well. Important deviations occur when huge spikes occur in 
+the true data such as the COVID-19 spike around 2020. Here, the model predictions 
+severely underestimate the real development. Additionally, small deviations occur 
+around turning points but overall, the blue and black lines are quite close to each 
+other, indicating a good in-sample fit. Note that although the MPE and MAPE errors 
+are quite high, these percentage metrics blow up as the GDP growth is close to 0. 
+Hence, the relatively high values of these specific accuracy metrics do not alarm us.
+Looking at the out-of-sample forecast, the model predicts GDP growth to continue 
+hovering around a constant mean close to zero. However, we face rising uncertainty 
+of our predictions as we go further into the future, showing the increasing 
+variance of the Best Linear Forecast errors.
 
-\textbf{GDP}
-
-The fit of the in-sample GDP prediction is shown in the following
-figure:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/GDP_fitted_vs_actual} 
-
-}
-
-\caption{GDP - in-sample prediction}\label{fig:unnamed-chunk-14}
-\end{figure}
-
-The formal measures of the fit are estimated as:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-15}GDP - accuracy metrics}
-\centering
-\begin{tabular}[t]{lrrrrrrr}
-\toprule
-set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
-\midrule
-Training set & -30.63153 & 9021.217 & 3505.39 & -106.5096 & 452.5585 & 0.7699877 & -0.0027098\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-The forecast of the GDP series is:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/GDP_forecast} 
-
-}
-
-\caption{GDP - Forecast}\label{fig:unnamed-chunk-16}
-\end{figure}
-
-\textbf{Trade Balance}:
-
-The in-sample fit of the Trade Balance is described by the following
-metrics:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-17}Trade Balance - accuracy metrics}
-\centering
-\begin{tabular}[t]{lrrrrrrr}
-\toprule
-set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
-\midrule
-Training set & -196.0811 & 4513.033 & 2255.195 & Inf & Inf & 0.6855749 & 0.0055908\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-The forecast of the GDP series is:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/Trade Balance_forecast} 
-
-}
-
-\caption{GDP - Forecast}\label{fig:unnamed-chunk-18}
-\end{figure}
-
-\textbf{Exchange Rate}:
-
-The in-sample fit of the Trade Balance is described by the following
-metrics:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-19}Exchange Rate - accuracy metrics}
-\centering
-\begin{tabular}[t]{lrrrrrrr}
-\toprule
-set & ME & RMSE & MAE & MPE & MAPE & MASE & ACF1\\
-\midrule
-Training set & -0.0011617 & 0.034616 & 0.0265389 & 137.7543 & 152.9467 & 0.6818584 & -0.0075285\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-The forecast of the GDP series is:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/Exchange Rate_forecast} 
-
-}
-
-\caption{Exchange Rate - Forecast}\label{fig:unnamed-chunk-20}
+\begin{figure}[htbp]
+    \centering
+        \caption{\textsc{Forecast performance for UK GDP, Exchange Rate, and Trade Balance}}
+    \label{fig:forecast_results}
+    % GDP: In-sample and Forecast
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/GDP_fitted_vs_actual.png}
+        \caption{GDP: In-sample forecast}
+        \label{fig:gdp_in}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/GDP_forecast.png}
+        \caption{GDP: Out-of-sample forecast}
+        \label{fig:gdp_out}
+    \end{subfigure}
+    
+    % Trade Balance: In-sample and Forecast
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/Trade Balance_fitted_vs_actual.png}
+        \caption{Trade Balance: In-sample forecast}
+        \label{fig:tb_in}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/Trade Balance_forecast.png}
+        \caption{Trade Balance: Out-of-sample forecast}
+        \label{fig:tb_out}
+    \end{subfigure}
+    
+    % Exchange Rate: In-sample and Forecast
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/Exchange Rate_fitted_vs_actual.png}
+        \caption{Exchange Rate: In-sample forecast}
+        \label{fig:er_in}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{../figures/Exchange Rate_forecast.png}
+        \caption{Exchange Rate: Out-of-sample forecast}
+        \label{fig:er_out}
+    \end{subfigure}
 \end{figure}
 
 \section{Multivariate Analysis}
 
 \subsection{Theoretical framework}
 
+Present a simple model based on paper to guide our analysis especially the 
+var ordering for cholesky decomp.
+
 \subsection{Optimal lag selection}
 
-c.f. R script. Different tests suggest different lags as can be seen in
-the following table:
+We use the VARselect command in R to estimate the optimal lags. The results in 
+table \ref{fig:lagselection} present the optimal lags as suggested by four different tests. These
+tests aim to balance out the goodness-of-fit against model complexit with lower 
+values indicating better models. While AIC 
+(Akaike Information Criterion) and FPE (Final Prediction Error) impose a constant
+penalty per additional coefficient (and hence, lag) added to the model, they opt
+for more complex dynamics if that means reducing the residual variance. 
+By contrast, SC (Schwarz Information Criterion, also known as Bayesian Information Criterion) 
+and HQ (Hannan-Quinn) have penalties that increase with the number of lags used, 
+hence selecting only the most essential lags. 
 
-\bgroup \table[H]
+\begin{table}[ht]
 \centering
-\caption{\label{tab:unnamed-chunk-21}Lag selection}
-\centering
-\begin{tabular}[t]{rrrr}
-\toprule
-AIC(n) & HQ(n) & SC(n) & FPE(n)\\
+\begin{threeparttable}
+\caption{\textsc{Optimal Lag Selection Based on Information Criteria}}\label{fig:lagselection}
+\begin{tabular}{lc}
+ \\[-1.8ex]  \hline \hline  \\[-1.8ex] 
+{Criterion} & {Optimal Lag} \\
 \midrule
-7 & 1 & 1 & 7\\
-\bottomrule
+ Akaike Information Criterion (AIC) & 7 \\
+Hannan-Quinn Information Criterion (HQ)  & 1 \\
+Schwarz Criterion (SC) / Bayesian Information Criterion (BIC)  & 1 \\
+Final Prediction Error (FPE) & 7 \\
+\hline \hline  \\[-1.8ex] 
 \end{tabular}
-\endtable\egroup
+\end{threeparttable}
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Coefficient estimates (Coeff.) with standard errors (SE). 
+{--} = Component not included in model. Significance levels: $^{***}p<0.01$, $^{**}p<0.05$, $^{*}p<0.1$. 
+AR = Autoregressive term, MA = Moving Average term. GDP intercept in original units. 
+\textit{Source:} Author's calculations using UK Statistical Office data.
+\end{minipage}
+\end{table}
+This explains why AIC and FPE suggest
+7 lags while SC and HQ suggest only 1 lag. In the following, we go with AIC’s and 
+FPE’s results using 7 lags for our analysis. Our rationale is its widespread 
+use in the econometric modeling literature and its 
+robustness in capturing model fit while penalizing complexity less stringently 
+than SC or HQ. This makes AIC  particularly suitable for applications 
+where predictive accuracy is prioritized, as it allows for a slightly more 
+flexible model specification, which is often beneficial in a context 
+with potential structural nuances.
 
-We decide to use a lag of 7, ensuring better forecasting fits at the
-expense of a loss of power.
+\subsection{VAR Estimation}
+
+\paragraph*{Statistical model.}
+
+In R, we estimate the model using the VAR command, which when using 7 lags implies an OLS regression of the following kind: 
+\begin{align*}
+x_{i,t}=\alpha_{i,0} \sum_{i=1}^3\sum_{k=1}^7\alpha_{i,t-k}x_{i,t-k} + u_{i,t}
+\end{align*}
+In this equation, $i\in\{1,2,3\}$ stands for GDP, Trade Balance, and Exchange Rate respectively. 
 
 \subsection{Residual testing}
+
+Testing our residuals as shown in Table (??) shows that there is neither serial 
+autocorrelation nor conditional heteroscedasticity (ARCH Effects) left in our model. 
+However, the normality tests strongly rejects Gaussianity of our error terms suggesting 
+that the residual distribution exhibits non-Gaussian features such as heavy tails or 
+skewness, implying that standard t-tests and confidence intervals may be invalid 
+unless we use sufficiently robust inference methods. This issue is common in VAR models and hence does not alarm us too much.
+
 
 The test statistics for the behavior of our residuals are summarized in
 the following table:
@@ -510,9 +517,13 @@ Normality & 7261.2574 & 6 & 0.0000000\\
 
 \subsection{VAR forecasts}
 
-\textcolor{red}{We should probably also add an in-sample forecast as Idann and Kenan did?}
-
-The VAR forecast of the first-differenced GDP is visualized by:
+Our out-of-sample forecasts for $\Delta$ GDP remain tightly centred on zero—consistent 
+with the stationary behavior we established in our VAR—while the fan chart’s 
+gradually widening bands reflect the growing uncertainty as the forecast 
+horizon extends. Importantly, even after the dramatic COVID-19 shock in early 
+2020, the model shows a rapid return of quarterly GDP growth to its long-run 
+average of essentially zero, underscoring both the economy’s resilience and 
+the appropriateness of our stationary specification.
 
 \begin{figure}
 
@@ -525,7 +536,32 @@ The VAR forecast of the first-differenced GDP is visualized by:
 
 \subsection{Cholesky decomposition}
 
+The Cholesky decomposition factorizes the residual covariance matrix of our 
+VAR into a lower‐triangular matrix, which yields a set of orthogonal
+(i.e. uncorrelated) structural shocks. By imposing a recursive identification
+scheme—where the first variable is assumed to be contemporaneously exogenous, 
+the second may respond immediately to the first, the third to the first two,
+and so on—we obtain a uniquely defined causal ordering. This ordering lets us 
+interpret each impulse‐response function as the dynamic effect of a one‐unit 
+shock in one variable on all others in the system. In our analysis, we apply 
+the Cholesky decomposition to the VAR residuals and adopt the 
+ordering: $\Delta$ GDP \textrightarrow Exchange Rate \textrightarrow Trade Balance, 
+so that shocks to  $\Delta$ GDP are treated as exogenous and shocks to Trade Balance 
+may reflect contemporaneous feedback from both $\Delta$ GDP and Exchange Rate.
+
 \subsection{Impulse response functions}
+
+A natural way to think about the very short‐run causal ordering is that GDP 
+shocks—say a surprise shift in domestic demand or productivity—are the 
+“slowest moving” of the three: they show up in quarterly national‐accounts 
+data and take a full quarter to be measured, and they reflect broad real‐economy
+fundamentals. By contrast, the exchange rate is set in continuous, 
+high‐frequency financial markets and will react almost instantaneously to 
+any news about output or monetary‐policy surprises. Finally, the trade balance 
+is connected to contracts, value chains, etc. that make short-term adjustment 
+difficult: export and import contracts, shipping lags and invoicing delays mean
+that net‐export volumes likely respond with substantial delay to movements
+in both output and the exchange rate.
 
 The impulse response functions for GDP are depicted as:
 

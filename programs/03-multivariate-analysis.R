@@ -23,8 +23,10 @@ chosen_lag <- lag_selection$selection["AIC(n)"]
 
 lags_df <- as.data.frame(t(lag_selection$selection))
 write.csv(lags_df,
-          file = file.path(root, "figures", "lag_selection.csv"),
+          file = file.path(root, "tables", "lag_selection.csv"),
           row.names = FALSE)
+
+
 # --------------------- III - Model Estimation ---------------------------------
 cat("\n2.2 Estimating VAR model...\n")
 var_model <- VAR(var_data, p = chosen_lag, type = "const")
