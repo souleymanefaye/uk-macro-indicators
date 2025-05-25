@@ -22,7 +22,7 @@ tables <- file.path(root, "tables")
 if (!requireNamespace("pacman", quietly = TRUE))
   install.packages("pacman")
 
-pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, dplyr, hpfilter, mFilter)
+pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, dplyr, hpfilter, mFilter, xtable, systemfit, stargazer)
 
 # functions
 # we write down a function to perform tests

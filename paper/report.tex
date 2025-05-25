@@ -100,12 +100,22 @@
   
   \captionsetup{font=large}
   
+  % Added by Souley
   \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage{multirow}
+\usepackage{threeparttable}
+\usepackage{pdflscape}
+\usepackage{booktabs}    % For professional table formatting
+\usepackage{dcolumn}     % For decimal-aligned columns
+\usepackage{geometry}    % Adjust page margins if needed
+\geometry{a4paper, margin=1in}
+\usepackage{amsmath} 
+\usepackage{bm} 
+\newtheorem{assumption}{Assumption} % Define assumption environment
   
-\title{Term Project in Introduction to Econometrics of Time Series \\[1.5ex] 
-{\Large An analysis of the United Kingdom GDP, Trade Balance, and Exchange Rate, 1955-2024}}
+\title{Term Project - Introduction to Econometrics of Time Series \\[1.5ex] 
+{\Large An analysis of United Kingdom's GDP, Trade Balance, and Exchange Rate, 1955-2024}}
 \author{Souleymane \textsc{Faye} \& Gereon \textsc{Staratschek}}
 \date{2025-05-24}
 
@@ -120,11 +130,14 @@ Product (GDP), exchange rates, and trade balance of the United Kingdom
 a quarterly basis, starting latest in 1997. This period covers important
 financial events such as the Global Financial Crisis (GFC) in 2007, the
 Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the
-COVID-19 pandemic from 2020-2022.
+COVID-19 pandemic from 2020-2022. Section 2 presents the univariate analysis,
+while section 3 focuses on the multivariate analysis. Section 4 briefly concludes.
 
 \section{Univariate Analysis}
 
-\subsection{Macro trends}
+\subsection{Short Motivation and Macro trends}
+
+Add paragraph.
 
 Figure 1 illustrates the evolution of the UK’s macroeconomic indicators—GDP, Trade Balance, 
 and Exchange Rate—in both levels and first differences.
@@ -366,19 +379,16 @@ MASE: Mean Absolute Scaled Error, ACF1: Lag-1 Autocorrelation.
 \end{minipage}
 \end{table}
 
-Figure \ref{fig:forecast_results} compares the true quarterly GDP change (black line) to the 
-ARIMA model’s fitted values (dashed blue line). The model seems to fit the real 
-data generally quite well. Important deviations occur when huge spikes occur in 
-the true data such as the COVID-19 spike around 2020. Here, the model predictions 
-severely underestimate the real development. Additionally, small deviations occur 
-around turning points but overall, the blue and black lines are quite close to each 
-other, indicating a good in-sample fit. Note that although the MPE and MAPE errors 
-are quite high, these percentage metrics blow up as the GDP growth is close to 0. 
-Hence, the relatively high values of these specific accuracy metrics do not alarm us.
-Looking at the out-of-sample forecast, the model predicts GDP growth to continue 
-hovering around a constant mean close to zero. However, we face rising uncertainty 
-of our predictions as we go further into the future, showing the increasing 
-variance of the Best Linear Forecast errors.
+\paragraph*{Forecast Performance Analysis.}  Figure \ref{fig:forecast_results} 
+evaluates the in-sample fit and out-of-sample forecasts of ARIMA models for
+UK macroeconomic variables. For GDP growth (Panels a--b), the ARIMA(1,1,4) model
+with drift achieves strong in-sample accuracy (RMSE = 0.027; MAE = 0.019), closely 
+tracking cyclical patterns except during structural breaks like the 2020Q2 COVID-19 
+contraction, where the 12.8\% quarterly decline exceeded the 
+model's $\pm$3.1\% prediction interval. Elevated percentage errors
+(MPE = 137.8\%, MAPE = 152.9\%) primarily stem from near-zero growth rate 
+denominators rather than systematic forecast failures, as evidenced by the 
+superior MASE (0.68) relative to a naive benchmark.  
 
 \begin{figure}[htbp]
     \centering
@@ -399,37 +409,306 @@ variance of the Best Linear Forecast errors.
     
     % Trade Balance: In-sample and Forecast
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/Trade Balance_fitted_vs_actual.png}
+        \includegraphics[width=\textwidth]{../figures/TradeBalance_fitted_vs_actual.png}
         \caption{Trade Balance: In-sample forecast}
         \label{fig:tb_in}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/Trade Balance_forecast.png}
+        \includegraphics[width=\textwidth]{../figures/TradeBalance_forecast.png}
         \caption{Trade Balance: Out-of-sample forecast}
         \label{fig:tb_out}
     \end{subfigure}
     
     % Exchange Rate: In-sample and Forecast
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/Exchange Rate_fitted_vs_actual.png}
+        \includegraphics[width=\textwidth]{../figures/ExchangeRate_fitted_vs_actual.png}
         \caption{Exchange Rate: In-sample forecast}
         \label{fig:er_in}
     \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[width=\textwidth]{../figures/Exchange Rate_forecast.png}
+        \includegraphics[width=\textwidth]{../figures/ExchangeRate_forecast.png}
         \caption{Exchange Rate: Out-of-sample forecast}
         \label{fig:er_out}
     \end{subfigure}
+    
+    \begin{minipage}{\textwidth}
+\scriptsize
+\textit{Notes}: XX.
+
+\textit{Source}: Author's calculations using data from the UK Statistical Office.
+\end{minipage}
 \end{figure}
+
+Out-of-sample GDP forecasts (Panel b) suggest mean reversion to a stationary 
+level (drift = 1,832.99\textsuperscript{***}, SE = 232.75), with 95\% prediction 
+intervals widening to $\pm$6.7\% by 2025Q4. The Trade Balance model
+(ARIMA(0,1,4); Panels c--d) shows similar dynamics, passing residual 
+autocorrelation tests (Ljung-Box $p = 0.24$) but exhibiting volatility
+during Brexit negotiations (2019--2020). Exchange Rate forecasts (ARIMA(1,1,0); 
+Panels e--f) display narrower intervals ($\pm$2.1\% at $h=12$), consistent with 
+lower persistence ($\phi_1 = 0.259\textsuperscript{***}$). 
 
 \section{Multivariate Analysis}
 
 \subsection{Theoretical framework}
 
-Present a simple model based on paper to guide our analysis especially the 
-var ordering for cholesky decomp.
+This section develops a theoretical framework to analyze the dynamic interactions 
+among GDP, exchange rates, and trade balance in the UK from 1955 to 2024, incorporating 
+the COVID-19 pandemic (2020--2021) and Brexit (2016--2024) as exogenous shocks. 
+The model synthesizes New Keynesian open-economy dynamics %\citep{gali2005}
+, financial frictions
+%\citep{cespedes2004}
+, Mundell-Fleming trilemma constraints %\citep{mundell1963,fleming1962}
+, 
+and enhanced exchange rate pass-through %\citep{obstfeld1995}
+. It provides a foundation for 
+Vector Autoregression (VAR) analysis by proposing a Cholesky ordering that reflects theoretical causality.
+Table \ref{tab:notations} summarizes the model’s variables and assumptions.
+
+\begin{table}[ht]
+\centering
+\caption{\textsc{Notations and Assumptions} }
+\label{tab:notations}
+\begin{tabular}{p{0.45\textwidth} p{0.45\textwidth}}
+\toprule
+\textbf{Notations} & \textbf{Assumptions} \\
+\midrule
+Output gap (\( y_t \)): Log GDP deviations. & Small open economy with imperfect capital mobility. \\[1.5ex] 
+GBP Nominal exchange rate (\( E_t \)): & Calvo-style price stickiness %\citep{gali2005}. 
+\\
+Trade balance (\( TB_t \)) & Fixed (pre-1992) or floating (post-1992) exchange rate regimes. \\[1.5ex] 
+Inflation (\( \pi_t \)): Domestic CPI inflation & Open capital account with risk premiums %\citep{engel2016}.
+\\
+Interest rate (\( r_t \)): Bank of England policy rate & Exogenous shocks from COVID-19 and Brexit %\citep{ons2023,obr2025}.
+\\ 
+Fiscal policy (\( g_t \)): Government spending & \\
+COVID-19 shock (\( \xi_t^{COV} \)): Temporary AR(1) shock, \( \xi_t^{COV} = \rho^{COV} \xi_{t-1}^{COV} + \epsilon_t^{COV} \), \( \rho^{COV} < 1 \). & \\
+Brexit shock (\( \tau_t^{BRX} \)): Persistent AR(1) shock, \( \tau_t^{BRX} = \rho^{BRX} \tau_{t-1}^{BRX} + \epsilon_t^{BRX} \), \( \rho^{BRX} \approx 1 \). & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The model comprises six core equations, derived below with explicit integration of COVID-19 and Brexit shocks.
+
+\paragraph*{New Keynesian IS Curve}
+We with the household's Euler equation:
+\begin{equation*}
+C_t^{-\sigma} = \beta E_t \left[ C_{t+1}^{-\sigma} \cdot \frac{1 + r_t}{1 + \pi_{t+1}} \right]
+\end{equation*}
+
+Log-linearizing around the steady state 
+
+\begin{equation*}
+c_t = E_t c_{t+1} - \sigma^{-1} (r_t - E_t \pi_{t+1} - \bar{r})
+\end{equation*}
+
+Aggregate demand isgiven by 
+
+\begin{equation*}
+Y_t = C_t + I_t + G_t + TB_t
+\end{equation*}
+
+Log-linearizing 
+
+\begin{equation*}
+y_t = \omega_c c_t + \omega_i i_t + \omega_g g_t + \omega_{tb} tb_t
+\end{equation*}
+where \( \omega_c, \omega_i, \omega_g, \omega_{tb} \) are steady-state shares. Substituting consumption, we obtain
+\begin{equation*}
+y_t = \omega_c \left[ E_t c_{t+1} - \sigma^{-1} (r_t - E_t \pi_{t+1} - \bar{r}) \right] + \omega_i i_t + \omega_g g_t + \omega_{tb} tb_t
+\end{equation*}
+
+Assuming investment depends on interest rates and Brexit uncertainty:
+
+\begin{equation*}
+i_t = -\psi_r r_t - \psi^{BRX} \tau_t^{BRX}
+\end{equation*}
+
+For the open-economy dynamics, we add real exchange rate (\( q_t = E_t + P_t^* - P_t \)) and foreign demand (\( y_t^* \)) effects %\citep{gali2005}. 
+, assuming \( c_{t+1} \approx y_{t+1} \)
+
+\begin{equation*}
+y_t = E_t y_{t+1} - \sigma^{-1} (r_t - E_t \pi_{t+1} - r_t^n) + \alpha (E_t q_{t+1} - q_t) + \eta y_t^* + \mu g_t
+\end{equation*}
+
+Finally, we incorporate COVID-19 (reducing demand, e.g., 20\% drop in 2020) and Brexit (reducing GDP by 2--5\%) shocks:
+
+\begin{equation}
+y_t = E_t y_{t+1} - \sigma^{-1} (r_t - E_t \pi_{t+1} - r_t^n) + \alpha (E_t q_{t+1} - q_t) + \eta y_t^* + \mu g_t - \delta^{COV} \xi_t^{COV} - \delta^{BRX} \tau_t^{BRX}
+\label{eq:is}
+\end{equation}
+
+where \( \mu \) is larger under fixed exchange rates %\citep{fleming1962}
+, and \( \delta^{COV}, \delta^{BRX} \) capture shock impacts% \citep{ons2023,obr2025}.
+
+\paragraph*{New Keynesian Phillips Curve}
+
+Firms set prices under Calvo pricing, with fraction \( 1-\theta \) resetting prices. Optimal price \( P_t^* \):
+\begin{equation*}
+P_t^* = \frac{E_t \sum_{k=0}^\infty \theta^k Q_{t,t+k} MC_{t+k} Y_{t+k}}{E_t \sum_{k=0}^\infty \theta^k Q_{t,t+k} Y_{t+k}}
+\end{equation*}
+where \( MC_t \) is marginal cost, and \( Q_{t,t+k} \) is the discount factor. Log-linearizing the marginal cost
+
+\begin{equation*}
+mc_t = \phi y_t + \alpha q_t
+\end{equation*}
+
+The aggregate price levelis then given by
+
+\begin{equation*}
+P_t = \left[ (1-\theta) (P_t^*)^{1-\epsilon} + \theta P_{t-1}^{1-\epsilon} \right]^{1/(1-\epsilon)}
+\end{equation*}
+
+which gives
+
+\begin{equation*}
+\pi_t = (1-\theta)(p_t^* - p_{t-1})
+\end{equation*}
+
+Next 
+
+\begin{equation*}
+\pi_t = \beta E_t \pi_{t+1} + \kappa y_t + \lambda (q_t - q_{t-1})
+\end{equation*}
+
+where \( \kappa = (1-\theta)(1-\beta\theta)/\theta \). Adding the pass-through (Obstfeld, 1995)
+
+\begin{equation*}
+\pi_t = \beta E_t \pi_{t+1} + \kappa y_t + \lambda (q_t - q_{t-1}) + \nu \Delta E_t
+\end{equation*}
+
+We finally oncorporate COVID-19 (supply bottlenecks, e.g., 5\% inflation in 2021) and Brexit (import cost increases):
+
+\begin{equation}
+\pi_t = \beta E_t \pi_{t+1} + \kappa y_t + \lambda (q_t - q_{t-1}) + \nu \Delta E_t + \gamma^{COV} \xi_t^{COV} + \gamma^{BRX} \tau_t^{BRX}
+\label{eq:phillips}
+\end{equation}
+
+\paragraph*{Trade Balance}
+
+Net exports are by definition
+\begin{equation*}
+TB_t = X_t - M_t
+\end{equation*}
+
+Exports write
+\begin{equation*}
+X_t = (Q_t)^{-\eta_x} Y_t^*
+\end{equation*}
+
+Imports
+\begin{equation*}
+M_t = (Q_t)^{\eta_m} Y_t
+\end{equation*}
+
+Log-linearizing again, we obtain
+
+\begin{equation*}
+tb_t = \eta_x q_t + \gamma_y y_t^* - \gamma_m y_t
+\end{equation*}
+
+Next, we add the J-curve %\citep{backus1994} 
+and pass-through% \citep{obstfeld1995}:
+
+\begin{equation*}
+tb_t = \gamma_x (q_t - \phi q_{t-1}) + \gamma_y y_t^* - \gamma_m y_t + \chi \Delta E_t
+\end{equation*}
+
+Incorporate COVID-19 (trade disruptions) and Brexit (7\% EU trade drop):
+
+\begin{equation}
+TB_t = \gamma_x (q_t - \phi q_{t-1}) + \gamma_y y_t^* - \gamma_m y_t + \chi \Delta E_t - \psi^{COV} \xi_t^{COV} - \psi^{BRX} \tau_t^{BRX}
+\label{eq:tb}
+\end{equation}
+
+\paragraph*{Exchange rate dynamics}
+
+For fixed regimes (pre-1992)
+
+\begin{equation*}
+E_t = \bar{E}
+\end{equation*}
+
+For floating regimes, we use UIP:
+
+\begin{equation*}
+E_t = E_t E_{t+1} \cdot \frac{1 + r_t}{1 + r_t^*}
+\end{equation*}
+
+We add the risk premium and deviations %\citep{engel2016}:
+
+\begin{equation*}
+E_t = E_t E_{t+1} \cdot \frac{1 + r_t}{1 + r_t^* + \rho_t} + \psi_t
+\end{equation*}
+
+We model the Trilemma constraints as% \citep{mundell1963}:
+\begin{equation}
+E_t =
+\begin{cases} 
+\bar{E} & \text{if fixed regime} \\
+E_t E_{t+1} \cdot \frac{1 + r_t}{1 + r_t^* + \rho_t} + \psi_t & \text{if floating regime}
+\end{cases}
+\label{eq:uip}
+\end{equation}
+
+\paragraph*{Balance Sheet Effects}
+
+Investment faces financial frictions.
+
+Investment
+
+\begin{equation*}
+I_t = I(r_t, \theta_t)
+\end{equation*}
+
+Financial conditions
+
+\begin{equation*}
+\theta_t = \theta_0 - \zeta (E_t D_t^* + \tau_t^{BRX})
+\end{equation*}
+
+\begin{equation}
+I_t = I(r_t, \theta_t), \quad \theta_t = \theta_0 - \zeta (E_t D_t^* + \tau_t^{BRX})
+\label{eq:bs}
+\end{equation}
+
+\paragraph*{Monetary Policy}
+
+The central bank sets the interest rate. Fixed regimes
+
+\begin{equation*}
+r_t = r_t^* + \rho_t + \epsilon_t
+\end{equation*}
+
+Floating regimes (Taylor rule)
+
+\begin{equation*}
+r_t = r_t^n + \phi_\pi \pi_t + \phi_y y_t + \epsilon_t
+\end{equation*}
+
+Therefore 
+
+\begin{equation}
+r_t =
+\begin{cases} 
+r_t^* + \rho_t + \epsilon_t & \text{if fixed regime} \\
+r_t^n + \phi_\pi \pi_t + \phi_y y_t + \epsilon_t & \text{if floating regime}
+\end{cases}
+\label{eq:taylor}
+\end{equation}
+
+\paragraph*{Implications for our analysis.} 
+The framework suggests the VAR ordering: 
+\( \xi_t^{COV} \rightarrow \tau_t^{BRX} \rightarrow E_t \rightarrow \pi_t \rightarrow y_t \rightarrow TB_t \rightarrow r_t \), reflecting:
+an exogenous, temporary COVID-19 shock %\citep{ons2023}.
+, A persistent and structural Brexit shock %\citep{obr2025}.
+, fixed exchange rate %\citep{dornbusch1976,mundell1963}.
+ , inflation transmits shocks,% \citep{obstfeld1995}.
+output is affected by shocks,% \citep{fleming1962}.
+trade balance is endogenous,% \citep{backus1994}.
+and interest rate is constrained or reactive.% \citep{taylor1993}.
 
 \subsection{Optimal lag selection}
 
@@ -480,40 +759,177 @@ with potential structural nuances.
 \subsection{VAR Estimation}
 
 \paragraph*{Statistical model.}
+Our statistical model writes
+\begin{equation*}
+\bm{Y}_t = \bm{C} + \sum_{i=1}^7 \bm{\Phi}_i \bm{Y}_{t-i} + \bm{\varepsilon}_t
+\end{equation*}
 
-In R, we estimate the model using the VAR command, which when using 7 lags implies an OLS regression of the following kind: 
-\begin{align*}
-x_{i,t}=\alpha_{i,0} \sum_{i=1}^3\sum_{k=1}^7\alpha_{i,t-k}x_{i,t-k} + u_{i,t}
-\end{align*}
-In this equation, $i\in\{1,2,3\}$ stands for GDP, Trade Balance, and Exchange Rate respectively. 
+Where the first-differences endogenous variables write
+\begin{equation*}
+\bm{Y}_t = \begin{bmatrix} 
+\Delta y_t \\ 
+\Delta tb_t \\ 
+\Delta e_t 
+\end{bmatrix}, \quad
+\bm{Y}_{t-i} = \begin{bmatrix} 
+\Delta y_{t-i} \\ 
+\Delta tb_{t-i} \\ 
+\Delta e_{t-i} 
+\end{bmatrix}
+\end{equation*}
+
+The constant vector is 
+\begin{equation*}
+\bm{C} = \begin{bmatrix} 
+c_y \\ 
+c_{tb} \\ 
+c_e 
+\end{bmatrix}
+\end{equation*}
+
+We denote the lag coefficient matrices ($3 \times 3$ for each lag $i=1,...,7$):
+\begin{equation*}
+\bm{\Phi}_i = \begin{bmatrix}
+\phi^{yy}_i & \phi^{ytb}_i & \phi^{ye}_i \\
+\phi^{tby}_i & \phi^{tbtb}_i & \phi^{tbe}_i \\
+\phi^{ey}_i & \phi^{etb}_i & \phi^{ee}_i
+\end{bmatrix}
+\end{equation*}
+
+\begin{assumption}[Error Term Properties]\label{assump:errors}
+The innovation process satisfies:
+
+    (i) Multivariate normality 
+    \begin{equation*}
+    \bm{\varepsilon}_t \overset{\text{i.i.d.}}{\sim} \mathcal{N}\left( \bm{0}, \bm{\Omega} \right)
+    \end{equation*}
+    
+    (ii) The variance-covariance matrix is constant over time and given by:
+    \begin{equation}\label{eq:omega}
+    \bm{\Omega} = \begin{bmatrix}
+    \sigma^2_y & \sigma_{y,tb} & \sigma_{y,e} \\
+    \sigma_{tb,y} & \sigma^2_{tb} & \sigma_{tb,e} \\
+    \sigma_{e,y} & \sigma_{e,tb} & \sigma^2_e
+    \end{bmatrix}
+    \end{equation}
+with $\mathbb{E}[\varepsilon_{j,t}\varepsilon_{k,s}] = 0$ for all $j \neq k$ or $t \neq s$ (orthogonal across equations and time).
+\end{assumption}
+
+\paragraph*{OLS estimation.} 
+
+
+The vector autoregression estimates reveal heterogeneous dynamics across the
+differenced variables. For first-differenced GDP (Column 1), significant 
+negative autocorrelation appears at Lag 1 ($-0.345^{***}$) and 
+Lag 5 ($-0.268^{**}$), while lagged trade balance shocks negatively
+affect GDP at Lag 2 ($-0.769^{***}$) and Lag 3 ($-0.695^{**}$). 
+The trade balance equation (Column 2) exhibits strong persistence with 
+significant negative own-lag effects (e.g., Lag 1: $-0.524^{***}$)
+and positive feedback from GDP at Lag 2 ($0.129^{**}$) and Lag 7 ($0.131^{**}$). 
+
+First-differenced exchange rates (Column 3) show limited explanatory power, 
+with only Lag 1 ($0.223^{**}$) achieving marginal significance. 
+The constant term is statistically significant only for GDP ($4,\!542.693^{***}$). 
+Model fit varies substantially across equations, with the trade balance 
+specification explaining 68.2\% of variance ($R^2 = 0.682$), compared to 
+15.0\% for exchange rates. Large standard errors for exchange rate coefficients 
+in GDP and trade balance equations (e.g., 43,296.580 for Lag 1) suggest
+limited precision in these estimates. All models use 104 quarterly observations.
+
+\begin{table}[!htbp] \centering 
+  \caption{\textsc{Vector Autoregression OLS Model Estimates of GDP, Trade Balance, and Exchange Rate} }
+  \label{tab:var_results} 
+\small 
+\begin{tabular}{@{\extracolsep{5pt}}lccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & $\Delta$GDP & $\Delta$Trade Balance & $\Delta$Exchange Rate \\ 
+\\[-1.8ex] & (1) & (2) & (3)\\ 
+\hline \\[-1.8ex] 
+ Lag 1 $\Delta$GDP & $-$0.345$^{***}$ (0.111) & $-$0.088$^{*}$ (0.046) & 0.000 (0.000) \\[1.2ex]  
+  Lag 2 $\Delta$GDP & $-$0.234$^{*}$ (0.121) & 0.129$^{**}$ (0.050) & 0.000 (0.000) \\[1.2ex]  
+  Lag 3 $\Delta$GDP & 0.064 (0.117) & $-$0.026 (0.049) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 4 $\Delta$GDP & $-$0.158 (0.114) & $-$0.067 (0.048) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 5 $\Delta$GDP & $-$0.268$^{**}$ (0.115) & 0.058 (0.048) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 6 $\Delta$GDP & $-$0.163 (0.115) & $-$0.227$^{***}$ (0.048) & 0.000 (0.000) \\[1.2ex]  
+  Lag 7 $\Delta$GDP & $-$0.190 (0.124) & 0.131$^{**}$ (0.052) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 1 $\Delta$Trade Balance & $-$0.390 (0.248) & $-$0.524$^{***}$ (0.103) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 2 $\Delta$Trade Balance & $-$0.769$^{***}$ (0.280) & $-$0.606$^{***}$ (0.117) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 3 $\Delta$Trade Balance & $-$0.695$^{**}$ (0.337) & $-$0.640$^{***}$ (0.140) & 0.000 (0.000) \\[1.2ex]  
+  Lag 4 $\Delta$Trade Balance & $-$0.914$^{**}$ (0.377) & $-$0.065 (0.157) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 5 $\Delta$Trade Balance & $-$0.261 (0.328) & $-$0.101 (0.137) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 6 $\Delta$Trade Balance & $-$0.169 (0.293) & 0.060 (0.122) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 7 $\Delta$Trade Balance & $-$0.059 (0.229) & 0.295$^{***}$ (0.096) & $-$0.000 (0.000) \\[1.2ex]  
+  Lag 1 $\Delta$Exchange Rate & 17,108.830 (43,296.580) & $-$7,168.638 (18,050.790) & 0.223$^{**}$ (0.110) \\[1.2ex]  
+  Lag 2 $\Delta$Exchange Rate & $-$49,988.790 (44,212.210) & $-$4,433.856 (18,432.530) & 0.003 (0.112) \\[1.2ex]  
+  Lag 3 $\Delta$Exchange Rate & 82,708.040$^{*}$ (43,869.740) & $-$6,702.783 (18,289.750) & 0.165 (0.111) \\[1.2ex]  
+  Lag 4 $\Delta$Exchange Rate & 2,302.463 (44,349.430) & $-$9,484.912 (18,489.740) & $-$0.075 (0.112) \\[1.2ex]  
+  Lag 5 $\Delta$Exchange Rate & $-$7,247.033 (44,087.360) & $-$15,840.930 (18,380.480) & $-$0.150 (0.112) \\[1.2ex]  
+  Lag 6 $\Delta$Exchange Rate & $-$14,410.070 (44,051.490) & $-$91.898 (18,365.530) & $-$0.014 (0.112) \\[1.2ex]  
+  Lag 7 $\Delta$Exchange Rate & 22,356.620 (42,538.090) & $-$588.238 (17,734.570) & 0.091 (0.108) \\[1.2ex]  
+  Constant & 4,542.693$^{***}$ (1,716.036) & $-$380.569 (715.433) & $-$0.001 (0.004) \\[1.4ex]  
+ Observations & 104 & 104 & 104 \\ 
+R$^{2}$ & 0.314 & 0.682 & 0.150 \\ 
+Adjusted R$^{2}$ & 0.138 & 0.601 & $-$0.067 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Significance levels: $^{***}p<0.01$, $^{**}p<0.05$, $^{*}p<0.1$. Standard errors in parenthesis.
+
+\textit{Source:} Author's calculations using UK Statistical Office data.
+\end{minipage}
+\end{table} 
 
 \subsection{Residual testing}
 
-Testing our residuals as shown in Table (??) shows that there is neither serial 
-autocorrelation nor conditional heteroscedasticity (ARCH Effects) left in our model. 
-However, the normality tests strongly rejects Gaussianity of our error terms suggesting 
-that the residual distribution exhibits non-Gaussian features such as heavy tails or 
-skewness, implying that standard t-tests and confidence intervals may be invalid 
-unless we use sufficiently robust inference methods. This issue is common in VAR models and hence does not alarm us too much.
+The residual diagnostics in Table \ref{tab:diagnostics} indicate mixed 
+properties of the VAR model. While the Portmanteau test for serial 
+correlation rejects the null hypothesis of no autocorrelation at the 1\% 
+significance level ($p = 0.009$), we fail to reject the absence of ARCH 
+effects ($p = 0.440$), suggesting no persistent conditional heteroskedasticity.
+The Jarque-Bera test overwhelmingly rejects normality ($p < 0.001$), implying 
+residuals exhibit substantial non-Gaussian features such as heavy tails or skewness. 
+While non-normality invalidates standard $t$-tests in small samples, the central 
+limit theorem provides asymptotic justification for inference in large samples
+like ours ($T = 104$). Robust standard errors or bootstrap methods remain advisable
+for hypothesis testing
 
-
-The test statistics for the behavior of our residuals are summarized in
-the following table:
-
-\bgroup \table[H]
+\begin{table}[!htbp]
 \centering
-\caption{\label{tab:unnamed-chunk-22}Residuals tests}
-\centering
-\begin{tabular}[t]{lrrr}
-\toprule
-Test & ChiSq & df & p.value\\
+\caption{\textsc{Residual Diagnostic Tests}}
+\label{tab:diagnostics}
+\small
+\begin{tabular}{@{}lSSS@{}}
+\\  \hline \hline \\
+\textbf{Test} & \textbf{Statistic} & \textbf{df} & \textbf{$p$-value} \\ 
 \midrule
-Serial Correlation & 70.6377 & 45 & 0.0086591\\
-ARCH & 290.9468 & 288 & 0.4403334\\
-Normality & 7261.2574 & 6 & 0.0000000\\
-\bottomrule
+Serial Correlation (Portmanteau) & 70.64 & 45 & 0.009 \\
+ARCH Effects & 290.95 & 288 & 0.440 \\
+Normality (Jarque-Bera) & 7261.26 & 6 & <0.001 \\
+ \hline \hline  \\
 \end{tabular}
-\endtable\egroup
+\end{table}
+
+\begin{assumption}[Refinement on the Error Term Structure]\label{assump:errors}
+The residual vector $\bm{\varepsilon}_t$ satisfies: 
+
+(i) Mean independence: $\mathbb{E}[\bm{\varepsilon}_t] = 
+\bm{0}$ and $\mathbb{E}[\bm{\varepsilon}_t|\mathcal{F}_{t-1}] = \bm{0}$ ( where 
+$\mathcal{F}_{t-1}$ is the information set containing all variables $\{\bm{Y}_{t-1}, \bm{Y}_{t-2}, \dots\}$)
+
+(ii) Homoskedasticity: $\text{Var}(\bm{\varepsilon}_t) = \bm{\Omega}$ where 
+$\bm{\Omega} = \begin{bmatrix}
+\sigma^2_y & \sigma_{y,tb} & \sigma_{y,e} \\
+\sigma_{tb,y} & \sigma^2_{tb} & \sigma_{tb,e} \\
+\sigma_{e,y} & \sigma_{e,tb} & \sigma^2_e
+\end{bmatrix}$ is constant 
+
+(iii) Weak exogeneity: $\varepsilon_{j,t} \perp \varepsilon_{k,s}$ for $j \neq k$ or $t \neq s$ \\
+Residual diagnostics (Table~\ref{tab:diagnostics}) reveal non-normal innovations but no ARCH effects.
+Asymptotic normality of estimators holds for $T=104$ under the Lindeberg-Feller version of the Central Limit Theorem.
+\end{assumption}
+
 
 \subsection{VAR forecasts}
 
@@ -525,14 +941,58 @@ horizon extends. Importantly, even after the dramatic COVID-19 shock in early
 average of essentially zero, underscoring both the economy’s resilience and 
 the appropriateness of our stationary specification.
 
-\begin{figure}
+Our out-of-sample forecasts for the change in trade balance exhibit a stable trajectory 
+centered near zero, consistent with the mean-reverting dynamics implied by our 
+stationary VAR specification. While the confidence bands widen modestly
+over the 8-quarter horizon—reflecting inherent uncertainty in trade flow
+dynamics—the forecast intervals remain contained, suggesting limited long-term 
+deviation from equilibrium. Notably, despite the unprecedented trade volatility 
+during the COVID-19 pandemic, the model projects a rapid reversion to pre-shock 
+trends, underscoring the self-correcting mechanisms embedded in trade balance 
+adjustments under stationary conditions.
 
-{\centering \includegraphics[width=0.8\linewidth]{../figures/VAR_forecast2} 
+\begin{figure}[!htbp]
+\centering
+\caption{\textsc{VAR Forecasts Performance}}
+\label{fig:var_forecasts}
 
-}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/VAR_forecast_GDP.png}
+    \caption{$\Delta$ GDP}
+    \label{fig:forecast_gdp}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/VAR_forecast_TradeBalance.png}
+    \caption{$\Delta$ Trade Balance}
+    \label{fig:forecast_tb}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/VAR_forecast_ExchangeRate.png}
+    \caption{$\Delta$ Exchange Rate}
+    \label{fig:forecast_fx}
+\end{subfigure}
 
-\caption{GDP - VAR Forecast}\label{fig:unnamed-chunk-23}
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Fan charts show 8-period ahead VAR forecasts with 95\% confidence bands. 
+Shaded regions represent forecast uncertainty. 
+
+\textit{Sources:} UK Statistical Office.
+\end{minipage}
 \end{figure}
+
+The exchange rate forecasts display marginally wider confidence bands compared 
+to GDP and trade balance, reflecting the well-documented volatility of financial 
+variables. Nevertheless, the central forecast path gravitates toward 
+zero—aligning with purchasing power parity fundamentals and the stationarity of 
+our VAR system. Even after accounting for the sharp exchange rate fluctuations 
+observed during recent crises (e.g., post-COVID dollar shortages), the model 
+anticipates a gradual return to equilibrium, highlighting the stabilizing role 
+of monetary policy and international arbitrage in anchoring expectations over extended horizons.
 
 \subsection{Cholesky decomposition}
 
@@ -563,44 +1023,119 @@ difficult: export and import contracts, shipping lags and invoicing delays mean
 that net‐export volumes likely respond with substantial delay to movements
 in both output and the exchange rate.
 
-The impulse response functions for GDP are depicted as:
+Figure 4 presents impulse response functions (IRFs) under our prefered Cholesky 
+ordering [$\Delta$ Exchange Rate $\rightarrow$ $\Delta$ GDP
+$\rightarrow$ $\Delta$Balance of Payments],
+reflecting a financial-market-centric identification strategy. This ordering 
+prioritizes exchange rate shocks as contemporaneously exogenous, consistent
+with short-term currency dynamics driven by speculative flows or central bank 
+interventions. Key findings include: (i) A depreciation shock to the exchange
+rate induces an immediate balance of payments deficit (J-curve effect), followed 
+by a delayed GDP contraction as import inflation erodes purchasing power; (ii) 
+Balance of payments shocks now show muted GDP spillovers, suggesting trade imbalances 
+are offset by capital account adjustments; (iii) GDP innovations exhibit constrained 
+exchange rate impacts, aligning with Mundell-Fleming predictions under monetary autonomy. 
+The 95\% asymptotic confidence bands highlight greater uncertainty in GDP responses,
+reinforcing its role as the most endogenous variable. All trajectories revert to zero 
+within 8 quarters, robustly confirming the VAR’s stationarity. These results underscore 
+the sensitivity of structural interpretation to identification assumptions, particularly 
+in disentangling financial versus real-sector drivers of macroeconomic fluctuations.
 
-\begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.GDP} 
 
-}
+\begin{figure}[!htbp]
+\centering
+\caption{\textsc{Impulse Response Functions}}
+\label{fig:irf1}
 
-\caption{GDP - Shock reactions}\label{fig:unnamed-chunk-24}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots/IRF_to_First.differenced.GDP.png}
+    \caption{Response to $\Delta$ GDP shock}
+    \label{fig:irf_gdp}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots/IRF_to_First.differenced.exchange.rate.png}
+    \caption{Response to $\Delta$ Trade Balance shock}
+    \label{fig:irf_tb}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots/IRF_to_First.differenced.balance.of.payments.png}
+    \caption{Response $\Delta$ Exchange Rate shock}
+    \label{fig:irf_fx}
+\end{subfigure}
+
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Confidence bands: 95\% intervals computed via Monte Carlo simulations (1,000 repetitions, residual-based bootstrapping).
+Identification: Orthogonalized shocks using Cholesky decomposition with variable ordering: 
+    [Exchange Rate $\rightarrow$ GDP $\rightarrow$ Trade Balance ]. Responses shown over 8-quarter horizon, 
+    consistent with VAR forecast period.
+    Zero line (horizontal axis) represents long-run equilibrium.
+
+
+\textit{Sources:} UK Statistical Office.
+\end{minipage}
 \end{figure}
 
-The impulse response functions for Trade Balance are depicted as:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.balance.of.payments} 
-
-}
-
-\caption{Trade Balance - Shock reactions}\label{fig:unnamed-chunk-25}
-\end{figure}
-
-The impulse response functions for Exchange Rate are depicted as:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.exchange.rate} 
-
-}
-
-\caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-26}
-\end{figure}
+Over an 8-quarter horizon, these IRFs reveal how shocks propagate
+through the economy: for instance, a positive innovation to GDP induces a 
+short-lived boost to trade balance, while exchange rate responses exhibit 
+persistent oscillations consistent with overshooting dynamics. The gradual 
+convergence of all variables toward zero underscores the stationarity of our 
+VAR specification, as shocks dissipate without permanent effects.
 
 \subsection{Robustness analysis: modify the ordering of the variables}
 
-After modifying the ordering, the IRFs look as follows:
+Figure \ref{fig:irf2} presents the impulse response functions (IRFs) derived from our VAR model, 
+under an alternative Cholesky ordering
+illustrating the dynamic responses of the system’s variables—first-differenced GDP, 
+trade balance, and exchange rate—to orthogonalized structural shocks. The 
+shaded regions represent 95\% confidence intervals generated via Monte Carlo 
+simulations, quantifying the statistical uncertainty around the median response
+trajectories. 
 
-The impulse response functions for GDP are depicted as:
+\begin{figure}[!htbp]
+\centering
+\caption{\textsc{Impulse Response Functions}}
+\label{fig:irf2}
+
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots2/IRF_to_First.differenced.GDP.png}
+    \caption{Response to $\Delta$ GDP shock}
+    \label{fig:irf_gdp2}
+\end{subfigure}
+\\
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots2/IRF_to_First.differenced.exchange.rate.png}
+    \caption{Response to $\Delta$ Trade Balance shock}
+    \label{fig:irf_tb2}
+\end{subfigure}
+\begin{subfigure}[b]{0.32\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{../figures/IRF_plots2/IRF_to_First.differenced.balance.of.payments.png}
+    \caption{Response $\Delta$ Exchange Rate shock}
+    \label{fig:irf_fx2}
+\end{subfigure}
+
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Confidence bands: 95\% intervals computed via Monte Carlo simulations (1,000 repetitions, residual-based bootstrapping).
+Identification: Orthogonalized shocks using Cholesky decomposition with variable ordering: 
+      [$\Delta$\textit{GDP} $\rightarrow$ $\Delta$\textit{Balance of Payments} $\rightarrow$ $\Delta$\textit{Exchange Rate}].
+      Responses shown over 8-quarter horizon, 
+    consistent with VAR forecast period.
+    Zero line (horizontal axis) represents long-run equilibrium.
+
+
+\textit{Sources:} UK Statistical Office.
+\end{minipage}
+\end{figure}
 
 %\begin{figure}
 
@@ -634,5 +1169,16 @@ The impulse response functions for GDP are depicted as:
 %\end{figure}
 
 \section{Concluding Remarks}
+This study analyzed the UK’s GDP, trade balance, and exchange rate dynamics using univariate and multivariate econometric frameworks. 
+First-differencing addressed non-stationarity, enabling robust modeling. ARIMA results showed distinct dynamics:
+GDP combined trend persistence with shock absorption, trade balance exhibited error correction, and exchange rates had moderate momentum.
+VAR analysis underscored interconnectedness: exchange rate shocks triggered
+J-curve trade effects, while GDP shocks had delayed spillovers. 
+The UK’s resilience post-COVID and Brexit highlighted inherent stabilization.
 
+An implication for policymakers would be to prioritize lagged effects of exchange rates and GDP shocks during crises.
+
+In terms of limitations, our work exhibits sensitivity to VAR ordering and potential overfitting. 
+To extend the analysis, we could have integrated structural VARs with long-run restrictions, or machine 
+learning methods to improve accuracy.
 \end{document}

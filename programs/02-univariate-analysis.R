@@ -185,98 +185,110 @@ acc_df  <- acc_mat |>
 readr::write_csv(acc_df,
                  file.path(root, "tables", "GDP_accuracy_metrics.csv"))
 
-png(filename = file.path(root, "figures/GDP_fitted_vs_actual.png"), 
+# Custom theme settings for all plots
+plot_theme <- function() {
+  par(
+    cex.lab = 1.5,    # Larger axis labels
+    cex.axis = 1.3,   # Larger axis numbers
+    cex.main = 1.7,   # Larger main titles
+    mar = c(5, 5, 4, 2) + 0.1,  # Bottom, Left, Top, Right margins
+    mgp = c(3, 1, 0)  # Axis label positions
+  )
+}
+
+# --- GDP Forecasting ---
+png(file.path(root, "figures/GDP_fitted_vs_actual.png"), 
     width = 1600, height = 900, res = 150)
-par(mfrow=c(1,1)) # Reset plot layout if needed
-plot(gdp_forecast$x, col = "black", ylab = "Change in real GDP", xlab = "Year",
+plot_theme()
+plot(gdp_forecast$x, col = "black", lwd = 2,
+     ylab = "Change in Real GDP", xlab = "Year",
      main = "",
      ylim = range(c(gdp_forecast$x, fitted_values_gdp), na.rm = TRUE))
-lines(fitted_values_gdp, col = "blue", lty = 2)
-legend("topleft", legend = c("Actual data", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
-cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
-cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
-dev.off()        
-
-
-png(filename = file.path(root, "figures/GDP_forecast.png"), 
-    width = 1600, height = 900, res = 150)
-cat("\nOut-of-sample forecasts for GDP:\n")
-# The `plot(forecast_object)` shows both historical data and out-of-sample forecasts.
-plot(gdp_forecast, xlab = "Year", ylab = "Change in Real GDP", main = paste("", gdp_model$method))
-abline(v = time(gdp_forecast$x)[length(gdp_forecast$x)], lty = 3, col = "gray") # Mark end of actuals
-cat("The plot above shows the historical GDP data, the out-of-sample point forecasts for the next", h_gdp, "periods, and their prediction intervals.\n")
-cat("Out-of-sample point forecasts:\n")
-print(gdp_forecast$mean)
-cat("\n--- Trade Balance Forecasting ---\n")
-cat("In-sample performance for Trade Balance:\n")
+lines(fitted_values_gdp, col = "#1F77B4", lwd = 2, lty = 2)  # Blue color
+grid(col = "gray80", lty = "dotted")
+legend("topleft", legend = c("Actual Data", "In-sample Fitted (ARIMA)"),
+       col = c("black", "#1F77B4"), lty = c(1, 2), lwd = 2,
+       cex = 1.2, bg = "white")
 dev.off()
 
-
-fitted_values_bp <- fitted(bp_forecast)
-
-print(accuracy(bp_forecast))
-acc_mat <- accuracy(bp_forecast)
-acc_df  <- acc_mat |>
-  as.data.frame() |>
-  tibble::rownames_to_column(var = "set")
-readr::write_csv(acc_df,
-                 file.path(root, "tables", "Trade Balance_accuracy_metrics.csv"))
-
-png(filename = file.path(root, "figures/Trade Balance_fitted_vs_actual.png"), 
+png(file.path(root, "figures/GDP_forecast.png"), 
     width = 1600, height = 900, res = 150)
-par(mfrow=c(1,1)) # Reset plot layout if needed
-plot(bp_forecast$x, col = "black", ylab = "Trade Balance (first-difference)", 
-     main = "Trade Balance: Actual vs. In-sample Fitted Values",
+plot_theme()
+plot(gdp_forecast, main = "",
+     xlab = "Year", ylab = "Change in Real GDP",
+     col = "black", fcol = "#D62728", flwd = 2,  # Red forecast line
+     shaded = TRUE, shadecols = c("#F0F0F0", "#D9D9D9"),  # Gray intervals
+     pi.col = "#D62728")  # Red prediction interval lines
+abline(v = time(gdp_forecast$x)[length(gdp_forecast$x)], 
+       lty = 2, col = "gray40", lwd = 2)
+legend("topleft", 
+       legend = c("Historical Data", "Point Forecast", "80% CI", "95% CI"),
+       col = c("black", "#D62728", "#D62728", "#D62728"),
+       lty = c(1, 1, 1, 1), lwd = c(2, 2, 8, 12),
+       cex = 1.2, bg = "white")
+dev.off()
+
+# --- Trade Balance Forecasting ---
+png(file.path(root, "figures/TradeBalance_fitted_vs_actual.png"), 
+    width = 1600, height = 900, res = 150)
+plot_theme()
+plot(bp_forecast$x, col = "black", lwd = 2,
+     ylab = "Change in Trade Balance", xlab = "Year",
+     main = "",
      ylim = range(c(bp_forecast$x, fitted_values_bp), na.rm = TRUE))
-lines(fitted_values_bp, col = "blue", lty = 2)
-legend("topleft", legend = c("Actual Trade Balance", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
-cat("The plot above shows the original Trade Balance series and the in-sample fitted values from the ARIMA model.\n")
-cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
-cat("\nOut-of-sample forecasts for Trade Balance:\n")
+lines(fitted_values_bp, col = "#1F77B4", lwd = 2, lty = 2)
+grid(col = "gray80", lty = "dotted")
+legend("topleft", legend = c("Actual Data", "In-sample Fitted (ARIMA)"),
+       col = c("black", "#1F77B4"), lty = c(1, 2), lwd = 2,
+       cex = 1.2, bg = "white")
 dev.off()
 
-png(filename = file.path(root, "figures/Trade Balance_forecast.png"), 
+png(file.path(root, "figures/TradeBalance_forecast.png"), 
     width = 1600, height = 900, res = 150)
-plot(bp_forecast,  xlab = "Year", ylab = "Change in Trade Balance", main = paste("", bp_model$method))
-abline(v = time(bp_forecast$x)[length(bp_forecast$x)], lty = 2, col = "gray") # Mark end of actuals
-cat("The plot above shows the historical Trade Balance data, the out-of-sample point forecasts for the next", h_bp, "periods, and their prediction intervals.\n")
-cat("Out-of-sample point forecasts:\n")
-print(bp_forecast$mean)
+plot_theme()
+plot(bp_forecast, main = "",
+     xlab = "Year", ylab = "Change in Trade Balance",
+     col = "black", fcol = "#D62728", flwd = 2,
+     shaded = TRUE, shadecols = c("#F0F0F0", "#D9D9D9"),
+     pi.col = "#D62728")
+abline(v = time(bp_forecast$x)[length(bp_forecast$x)], 
+       lty = 2, col = "gray40", lwd = 2)
+legend("topleft", 
+       legend = c("Historical Data", "Point Forecast", "80% CI", "95% CI"),
+       col = c("black", "#D62728", "#D62728", "#D62728"),
+       lty = c(1, 1, 1, 1), lwd = c(2, 2, 8, 12),
+       cex = 1.2, bg = "white")
 dev.off()
-
 
 # --- Exchange Rate Forecasting ---
-cat("\n--- Exchange Rate Forecasting ---\n")
-
-cat("In-sample performance for Exchange Rate:\n")
-fitted_values_erate <- fitted(erate_forecast)
-
-print(accuracy(erate_forecast))
-acc_mat <- accuracy(erate_forecast)
-acc_df  <- acc_mat |>
-  as.data.frame() |>
-  tibble::rownames_to_column(var = "set")
-readr::write_csv(acc_df,
-                 file.path(root, "tables", "Exchange Rate_accuracy_metrics.csv"))
-
-png(filename = file.path(root, "figures/Exchange Rate_fitted_vs_actual.png"), 
+png(file.path(root, "figures/ExchangeRate_fitted_vs_actual.png"), 
     width = 1600, height = 900, res = 150)
-par(mfrow=c(1,1)) # Reset plot layout if needed
-plot(erate_forecast$x, col = "black", ylab = "Average Sterling Exchange Rate (First-Differenced)", 
-     main = "Exchange Rate: Actual vs. In-sample Fitted Values",
+plot_theme()
+plot(erate_forecast$x, col = "black", lwd = 2,
+     ylab = "Change in Exchange Rate", xlab = "Year",
+     main = "Exchange Rate: Actual vs. Fitted Values",
      ylim = range(c(erate_forecast$x, fitted_values_erate), na.rm = TRUE))
-lines(fitted_values_erate, col = "blue", lty = 2)
-legend("topleft", legend = c("Actual Average Sterling Exchange Rate", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
-cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
-cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
+lines(fitted_values_erate, col = "#1F77B4", lwd = 2, lty = 2)
+grid(col = "gray80", lty = "dotted")
+legend("topleft", 
+       legend = c("Actual Data", "In-sample Fitted (ARIMA)"),
+       col = c("black", "#1F77B4"), lty = c(1, 2), lwd = 2,
+       cex = 1.2, bg = "white")
 dev.off()
 
-cat("\nOut-of-sample forecasts for exchange rate:\n")
-png(filename = file.path(root, "figures/Exchange Rate_forecast.png"),
+png(file.path(root, "figures/ExchangeRate_forecast.png"), 
     width = 1600, height = 900, res = 150)
-plot(erate_forecast, main = paste("Exchange rate Forecasts from", erate_model$method))
-abline(v = time(erate_forecast$x)[length(erate_forecast$x)], lty = 3, col = "gray") # Mark end of actuals
-cat("The plot above shows the historical trade balance data, the out-of-sample point forecasts for the next", h_erate, "periods, and their prediction intervals.\n")
-cat("Out-of-sample point forecasts:\n")
-print(erate_forecast$mean)
+plot_theme()
+plot(erate_forecast, main = "",
+     xlab = "Year", ylab = "Change in Exchange Rate",
+     col = "black", fcol = "#D62728", flwd = 2,
+     shaded = TRUE, shadecols = c("#F0F0F0", "#D9D9D9"),
+     pi.col = "#D62728")
+abline(v = time(erate_forecast$x)[length(erate_forecast$x)], 
+       lty = 2, col = "gray40", lwd = 2)
+legend("topleft", 
+       legend = c("Historical Data", "Point Forecast", "80% CI", "95% CI"),
+       col = c("black", "#D62728", "#D62728", "#D62728"),
+       lty = c(1, 1, 1, 1), lwd = c(2, 2, 8, 12),
+       cex = 1.2, bg = "white")
 dev.off()
