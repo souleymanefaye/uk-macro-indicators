@@ -11,118 +11,95 @@ uk_data$date <- as.yearqtr(uk_data$date, format = "Q%q %Y")
 
 # --------------------- II - Plots ------------------------------------
 cat("\n1.1 Plotting time series in levels...\n")
-gdp_plot <- ggplot(uk_data, aes(x = date, y = gdp)) +
-  geom_line(color = "#2c7bb6", linewidth = 0.8) +
-  scale_x_yearqtr(
-    name = "Year",
-    format = "Q%q %Y",
-    breaks = seq(min(uk_data$date), max(uk_data$date), by = 3), # Every 2 years
-    expand = c(0, 0)
-  ) +
-  scale_y_continuous(
-    name = "GDP (in millions of GBP)",
-    labels = scales::comma_format(scale = 1e-6), # Convert to millions, add commas
-    expand = c(0, 0)
-  ) +
-  labs(
-    title = "UK GDP Over Time (1955–2023)",
-    caption = "Source: UK Statistical Office."
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold", margin = margin(b = 10)),
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    axis.text.x = element_text(angle = 45, hjust = 1), # Rotate x-axis labels for readability
-    plot.caption = element_text(size = 8, hjust = 0, margin = margin(t = 10)),
-    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-    panel.grid.minor = element_blank(),
-    plot.background = element_rect(fill = "white", color = NA),
-    panel.background = element_rect(fill = "white", color = NA)
-  ) 
 
-ggsave("figures/gdp_plot.png", gdp_plot, width = 8, height = 5, dpi = 300)
-#
-bop_plot <- ggplot(uk_data, aes(x = date, y = balance_payments)) +
-  geom_line(color = "#2c7bb6", linewidth = 0.8) +
-  scale_x_yearqtr(
-    name = "Year",
-    format = "Q%q %Y",
-    breaks = seq(min(uk_data$date), max(uk_data$date), by = 3), # Every 2 years
-    expand = c(0, 0)
-  ) +
-  scale_y_continuous(
-    name = "Balance of Payments (in millions of GBP)"
-  ) +
-  labs(
-    title = "UK Balance of Payments Over Time (1955–2024)",
-    caption = "Source: UK Statistical Office."
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold", margin = margin(b = 10)),
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    axis.text.x = element_text(angle = 45, hjust = 1), # Rotate x-axis labels for readability
-    plot.caption = element_text(size = 8, hjust = 0, margin = margin(t = 10)),
-    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-    panel.grid.minor = element_blank(),
-    plot.background = element_rect(fill = "white", color = NA),
-    panel.background = element_rect(fill = "white", color = NA)
-  )
-
-ggsave("figures/bop_plot.png", bop_plot, width = 8, height = 5, dpi = 300)
-
-#
-exchange_plot <- ggplot(uk_data, aes(x = date, y = exchange_rate)) +
-  geom_line(color = "#2c7bb6", linewidth = 0.8) +
-  scale_x_yearqtr(
-    name = "Year",
-    format = "Q%q %Y",
-    breaks = seq(min(uk_data$date), max(uk_data$date), by = 3), 
-    expand = c(0, 0)
-  ) +
-  scale_y_continuous(
-    name = "Average Sterling exchange rate"
-  ) +
-  labs(
-    title = "UK Exchange Rate Over Time (1997–2024)",
-    caption = "Source: UK Statistical Office."
-  ) +
-  theme_minimal(base_size = 12) +
-  theme(
-    plot.title = element_text(hjust = 0.5, size = 14, face = "bold", margin = margin(b = 10)),
-    axis.title = element_text(size = 12, face = "bold"),
-    axis.text = element_text(size = 10),
-    axis.text.x = element_text(angle = 45, hjust = 1), # Rotate x-axis labels for readability
-    plot.caption = element_text(size = 8, hjust = 0, margin = margin(t = 10)),
-    panel.grid.major = element_line(color = "grey90", linewidth = 0.5),
-    panel.grid.minor = element_blank(),
-    plot.background = element_rect(fill = "white", color = NA),
-    panel.background = element_rect(fill = "white", color = NA)
-  )
-
-ggsave("figures/exchange_plot.png", exchange_plot, width = 8, height = 5, dpi = 300)
-
-
-# time series
+# define as time series
 uk_data_ts <- ts(uk_data[,-1], start=c(1955,1), end= c(2024,4), frequency = 4)
-#uk_data_ts <- na.omit(uk_data_ts)
 
-png("figures/uk_levels_base_plot.png", width = 1400, height = 900)
+# Apply HP filter
+# For GDP
+hp_gdp <- hpfilter(uk_data_ts[, "gdp"], freq = 1600, type = "lambda")
+gdp_trend <- hp_gdp$trend
 
-par(mfrow=c(2,2), mar=c(4, 4, 2, 1)) # Set up plot layout
-plot(uk_data_ts[, "gdp"], main = "UK GDP (Level)", ylab = "Value", xlab="Time")
-plot(uk_data_ts[, "balance_payments"], main = "UK Trade Balance (Level)", ylab = "Value", xlab="Time")
-plot(uk_data_ts[, "exchange_rate"], main = "UK Exchange Rate (Level)", ylab = "Value", xlab="Time")
-par(mfrow=c(1,1)) # Reset plot layout
+# For Balance of Payments
+hp_balance <- hpfilter(uk_data_ts[, "balance_payments"], freq = 1600, type = "lambda")
+balance_trend <- hp_balance$trend
+
+# --- For Exchange Rate ---
+hp_exchange <- hpfilter(na.omit(uk_data_ts[, "exchange_rate"]), freq = 1600, type = "lambda")
+exchange_trend <- hp_exchange$trend
+
+# --- Take first difference ---
+gdp_diff <- diff(uk_data_ts[, "gdp"])
+bp_diff <- diff(uk_data_ts[, "balance_payments"])
+erate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
+
+# HP trend (from levels) in first differences
+gdp_diff_trend <- diff(gdp_trend)
+balance_diff_trend <- diff(balance_trend)
+exchange_diff_trend <- diff(exchange_trend)
+
+# --- Plotting ---
+png("figures/uk_macro_levels_and_differences.png", width = 2600, height = 1400)
+
+par(mfrow = c(2, 3),
+    mar = c(5.5, 6.5, 4, 2),
+    mgp = c(4, 1.5, 0),
+    cex.lab = 2.8,        
+    cex.axis = 2.5,      
+    cex.main = 2.0,      
+    oma = c(0, 0, 4, 0))
+
+# Plot UK GDP with Trend
+plot(uk_data_ts[, "gdp"], main = "", ylab = "Real GDP (Billions GBP)", xlab = "Year")
+lines(gdp_trend, col = "red", lty = 2, lwd = 3) # Add dashed trend line
+grid(col = "lightgray", lty = "dotted")
+legend("topleft", 
+       legend = c("Actual Data", paste0("HP Trend (\u03BB=", 1600, ")")),
+       col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+
+# Plot UK Trade Balance with Trend
+plot(uk_data_ts[, "balance_payments"], main = "", ylab = "Trade Balance (Millions GBP)", xlab = "Year")
+lines(balance_trend, col = "red", lty = 2, lwd = 3) # Add dashed trend line
+grid(col = "lightgray", lty = "dotted")
+legend("topleft",
+       legend = c("Actual Data", paste0("HP Trend (\u03BB=", 1600, ")")),
+       col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+
+# Plot UK Exchange Rate with Trend
+plot(uk_data_ts[, "exchange_rate"], main = "", ylab = "Exchange Rate (GBP per USD)", xlab = "Year")
+lines(exchange_trend, col = "red", lty = 2, lwd = 3) # Add dashed trend line
+grid(col = "lightgray", lty = "dotted")
+legend("topleft",
+       legend = c("Actual Data", paste0("HP Trend (\u03BB=", 1600, ")")),
+       col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+
+# Plot UK GDP (First Difference)
+plot(gdp_diff, main = "", ylab = "Change in Real GDP (Billions GBP)", xlab = "Year", col = "black", bty = "l")
+lines(gdp_diff_trend, col = "red", lty = 2, lwd = 3) # Plotting diff of level-trend
+grid(col = "lightgray", lty = "dotted")
+legend("topleft", legend = c("Actual Change", paste0("Change in HP Trend (\u03BB=", 1600, ")")), col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+# Plot UK Trade Balance (First Difference)
+plot(bp_diff, main = "", ylab = "Change in Trade Balance (Millions GBP)", xlab = "Year", col = "black", bty = "l")
+lines(balance_diff_trend, col = "red", lty = 2, lwd = 3)
+grid(col = "lightgray", lty = "dotted")
+legend("topleft", # Adjust position based on data
+       legend = c("Actual Change", paste0("Change in HP Trend (\u03BB=", 1600, ")")), col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+# Plot UK Exchange Rate (First Difference)
+plot(erate_diff, main = "", ylab = "Change in Exchange Rate (GBP per USD)", xlab = "Year", col = "black", bty = "l")
+lines(exchange_diff_trend, col = "red", lty = 2, lwd = 3)
+grid(col = "lightgray", lty = "dotted")
+legend("topleft", # Adjust position based on data
+       legend = c("Actual Change", paste0("Change in HP Trend (\u03BB=", 1600, ")")), col = c("black", "red"), lty = c(1, 2), lwd = c(2, 3), cex = 3, bty = "n")
+
+
+par(mfrow = c(1, 1)) # Reset plot layout
 
 dev.off()
-
-# Take first differene here and add graph for it
-
-
-# Filter and add graph
 
 #--------------- III - Unit Root and Stationarity Tests ----------------------
 
@@ -138,19 +115,13 @@ perform_tests_new(uk_data_ts[, "gdp", drop = TRUE], "GDP")
 perform_tests_new(uk_data_ts[, "balance_payments", drop = TRUE], "Trade Balance")
 perform_tests_new(uk_data_ts[, "exchange_rate", drop = TRUE], "Exchange Rate")
 
-# take first-differences
-gdp_diff <- diff(uk_data_ts[, "gdp"])
-bp_diff <- diff(uk_data_ts[, "balance_payments"])
-erate_diff <- diff(uk_data_ts[, "exchange_rate"]) 
-
 perform_tests(gdp_diff, "Differenced GDP")
 perform_tests(bp_diff, "Differenced Trade Balance")
 perform_tests(erate_diff, "Differenced Exchange Rate")
-# The three series are stationary after first-differencing
 
-perform_tests_new(gdp_diff, "GDP_diff", out_dir = "results/tables") 
-perform_tests_new(bp_diff, "Trade Balance_diff", out_dir = "results/tables") 
-perform_tests_new(erate_diff, "Exchange Rate_diff", out_dir = "results/tables") 
+perform_tests_new(gdp_diff, "GDP_diff", out_dir = "tables") 
+perform_tests_new(bp_diff, "Trade Balance_diff", out_dir = "tables") 
+perform_tests_new(erate_diff, "Exchange Rate_diff", out_dir = "tables") 
 
 # save stationary time series data
 uk_data_stationary <- cbind(

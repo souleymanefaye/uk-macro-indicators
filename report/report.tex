@@ -94,7 +94,14 @@
   pdfauthor={Souleymane Faye \& Gereon Staratschek},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
-
+  
+  \captionsetup{font=large}
+  
+  \usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{multirow}
+\usepackage[skip=0.5ex]{caption}
+  
 \title{Macroeconometrics - UK variables report}
 \author{Souleymane Faye \& Gereon Staratschek}
 \date{2025-05-24}
@@ -102,7 +109,7 @@
 \begin{document}
 \maketitle
 
-\section*{Preliminaries}
+\section{Preliminaries}
 
 In this project, we aim to analyze the development of the Gross Domestic
 Product (GDP), exchange rates, and trade balance of the United Kingdom
@@ -112,46 +119,56 @@ financial events such as the Global Financial Crisis (GFC) in 2007, the
 Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the
 COVID-19 pandemic from 2020-2022.
 
-\section*{Exercise 1 -  Univariate Analysis}
+\section{Univariate Analysis}
 
-\subsection*{Part 1: Analyzing the time series in levels}
+\subsection{Macro trends}
 
-Looking at the plain time series data and analyzing the plots, we get
-the following results:
+Figure 1 illustrates the evolution of the UK’s macroeconomic indicators—GDP, Trade Balance, 
+and Exchange Rate—in both levels and first differences.
 
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../figures/uk_levels_base_plot} 
-
-}
-
-\caption{Residual diagnostics from ARIMA(1,0,4).}\label{fig:resid-plot}
-\end{figure}
-
-\textbf{GDP}: Data on UK's GDP is available on a quarterly basis
-starting in 1955. GDP exhibits a clear, upwards trend with only a few
-shocks (such as the 2020 COVID-19 oandemic or the 2007 financial crisis)
+\paragraph*{Trend Dynamics and Structural Breaks in Level Series.} 
+Data on UK's GDP, available on a quarterly basis
+since 1955, exhibits a clear, upwards trajectory with only a few
+shocks such as the 2007 financial crisis or the 2020 COVID-19 pandemic 
 interrupting the general trend. Hence, the GDP of the UK is clearly not
 stationary. However, the trend seems to be linear, suggesting that the
-first-differences time series of the GDP might be stationary.
-\textbackslash{}
-
-\textbf{Trade Balance}: As GDP, data on the trade balance is available
-on a quarterly basis starting in 1955. We see that the trade balance
-fluctuates around 0 until the 1990s where a negative trend seems to set
+first-differences time series of the GDP might be stationary. Similarly, data on 
+the trade balance is available on a quarterly basis starting in 1955.We see that 
+the trade balance fluctuates around 0 until the 1990s where a negative trend seems to set
 in continueing until the 2010s, when trade balance starts fluctuating
 around a low, negative value. However, since the observed spikes are
 getting much bigger over time, we also see an increase in fluctuation
-around the respective stationary mean. Hence, the data seems to be
-stationary in the beginning and in the end with a negative trend being
-observed between the 1990s and the 2010s. \textbackslash{}
+around the respective stationary mean.
 
-\textbf{Exchange Rate}: Data on the exchange rate is available since
+\begin{figure}[]
+
+\caption{\large \textsc{Trends in GDP, trade balance, and exchange rate}}\label{fig:trends-plot}
+
+{\centering \includegraphics[width=0.8\linewidth]{../figures/uk_macro_levels_and_differences.png} 
+
+}
+
+{\footnotesize {\textit{Notes}: This figure presents levels (top row) and 
+first differences (bottom row) of key UK macroeconomic indicators: real GDP 
+(left), trade balance (center), and exchange rate against the US dollar (right),
+from 1955 to 2023. All series are shown alongside Hodrick-Prescott (HP) trends 
+with a smoothing parameter of $\lambda=1600$.  \\ \textit{Source}: Authors' 
+computation from the UK Statistical Office.
+} }
+
+\end{figure}
+Hence, the data seems to be
+stationary in the beginning and in the end with a negative trend being
+observed between the 1990s and the 2010s. Data on the exchange rate is available since
 1997 on a quarterly basis. It exhibits stationarity between 1997 and
 2007, as well as from 2007 onwards. In 2007, a shock seems to have
-shifted the mean of the stationary process downwards.
+shifted the mean of the stationary process downwards. The bottom row highlights first-differenced series, which strip away trends to 
+reveal stationary fluctuations and cyclical patterns, supporting the idea that 
+differencing mitigates non-stationarity. Across all panels, Hodrick-Prescott 
+filtered trends ($\lambda=1600$, standard for quarterly data) visually disentangle 
+long-term trajectories from cyclical noise.
 
-\subsection*{Part 2: Conducting unit roots and stationarity tests}
+\subsection{Unit roots and stationarity tests}
 
 In this section, we aim to formally conduct stationarity tests for the
 series. As explained in the last section, we have reason to doubt that
@@ -159,139 +176,79 @@ our series are entirely stationary. However, for our analysis, we are
 relying on stationarity properties of the series. Hence, after
 identifying the non-stationary series formally, we will conduct the
 first-difference transformation to obtain stationary series for our
-analysis.\textbackslash{}
+analysis.
 
-Starting with the non-transformed series, we run a series of tests for
-each time series separately
-(\textcolor{red}{Explain the type of tests here!}) \textbackslash{}
+Table 1 presents the results of unit root and stationarity tests for our variables of interest, 
+analyzed in both levels and first differences. The Augmented 
+Dickey-Fuller (ADF), Phillips-Perron (PP), and ERS DF-GLS tests evaluate the 
+null hypothesis of a unit root (non-stationarity), while the KPSS test assesses 
+the null of stationarity. For GDP, the level series exhibits non-stationarity 
+across all tests (e.g., ADF p-value = 0.353, KPSS statistic = 4.732*), but its 
+first-differenced series shows strong evidence of stationarity (ADF statistic =
+-8.020*, KPSS = 0.086). Similarly, the trade balance in levels displays 
+persistent non-stationarity (KPSS = 3.395*), with stationarity achieved after 
+first differencing (ADF = -8.171*). The exchange rate shows mixed results in 
+levels (e.g., ADF p-value = 0.418), but clear stationarity in differences
+(PP = -82.885***)
 
-\textbf{GDP}:
-
-\bgroup \table[H]
+\begin{table}[htbp]
 \centering
-\caption{\label{tab:unnamed-chunk-2}Unit-root and stationarity tests for UK GDP}
-\centering
-\begin{tabular}[t]{lrrrrr}
+\caption{Unit Root and Stationnary Test Results} 
+\label{tab:unit_root}
+\footnotesize
+\begin{tabular}{@{} l cccc @{}}
 \toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
+\toprule
+ & \multicolumn{4}{c}{\bfseries Test Statistics} \\
+\cmidrule(lr){2-5}
+\textbf{Series/Test} & \textbf{ADF} & \textbf{PP} & \textbf{ERS DF-GLS} & \textbf{KPSS} \\
 \midrule
-ADF & -2.530635 & 0.3525184 & NA & NA & NA\\
-KPSS & 4.731673 & 0.0100000 & NA & NA & NA\\
-ERS DF-GLS & 3.073724 & NA & -1.62 & -1.94 & -2.57\\
-PP & -21.532938 & 0.0483211 & NA & NA & NA\\
+
+\multicolumn{5}{@{}l}{\textbf{Gross Domestic Product}} \\
+\cmidrule(lr){1-5}
+Levels & $-2.531^{}$ $(0.353)$ & $-21.533^{***}$ $(0.048)$ & $3.074$ & $4.732^{***}$ \\
+Differences & $-8.020^{***}$ $(0.010)$ & $-321.613^{***}$ $(0.010)$ & $-7.941^{***}$ & $0.086$ \\
+\addlinespace
+
+\multicolumn{5}{@{}l}{\textbf{Trade Balance}} \\
+\cmidrule(lr){1-5}
+Levels & $-2.225^{}$ $(0.481)$ & $-157.415^{***}$ $(0.010)$ & $-0.672$ & $3.395^{***}$ \\
+Differences & $-8.171^{***}$ $(0.010)$ & $-300.088^{***}$ $(0.010)$ & $-12.912^{***}$ & $0.035$ \\
+\addlinespace
+
+\multicolumn{5}{@{}l}{\textbf{Exchange Rate}} \\
+\cmidrule(lr){1-5}
+Levels & $-2.382^{}$ $(0.418)$ & $-13.158$ $(0.354)$ & $-1.415$ & $1.754^{***}$ \\
+Differences & $-5.041^{***}$ $(0.010)$ & $-82.885^{***}$ $(0.010)$ & $-2.188$ & $0.084$ \\
+\bottomrule
 \bottomrule
 \end{tabular}
-\endtable\egroup
 
-\textbf{Trade Balance}:
+\vspace{0.2cm}
+\begin{minipage}{\textwidth}
+\scriptsize
+\textit{Notes}: Null hypotheses—ADF/PP/ERS: series has a unit root 
+(non-stationary); KPSS: series is stationary. To establish stationarity: reject
+ADF/PP/ERS null (significant ***/**) \textit{and} fail to reject KPSS null 
+(statistic $<$ critical value). P-values in parentheses. Critical values (1\% level): ADF/PP = $-3.43$, 
+ERS DF-GLS = $-2.57$, KPSS = $0.739$. $^{***}p<0.01$, $^{**}p<0.05$. 
+First differences calculated as $\Delta y_t = y_t - y_{t-1}$. 
 
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-3}Unit-root and stationarity tests for UK GDP}
-\centering
-\begin{tabular}[t]{lrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
-\midrule
-ADF & -2.2250155 & 0.4812789 & NA & NA & NA\\
-KPSS & 3.3948515 & 0.0100000 & NA & NA & NA\\
-ERS DF-GLS & -0.6723293 & NA & -1.62 & -1.94 & -2.57\\
-PP & -157.4146465 & 0.0100000 & NA & NA & NA\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
+\textit{Source}: Author's calculations using data from the UK Statistical Office.
+\end{minipage}
+\end{table}
 
-\textbf{Exchange Rate}:
+We highlight that first-differencing effectively mitigates
+non-stationarity, as evidenced by statistically significant rejections of
+unit root hypotheses (***p<0.01) and failure to reject KPSS stationarity for 
+differenced series.These results justify the use of differenced series for subsequent analysis, 
+ensuring compliance with the stationarity assumptions underlying any further 
+econometric treatment. Critical values and p-values are reported to validate the robustness
+of conclusions.
 
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-4}Unit-root and stationarity tests for UK GDP}
-\centering
-\begin{tabular}[t]{lrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
-\midrule
-ADF & -2.382354 & 0.4179499 & NA & NA & NA\\
-KPSS & 1.754143 & 0.0100000 & NA & NA & NA\\
-ERS DF-GLS & -1.414941 & NA & -1.62 & -1.94 & -2.58\\
-PP & -13.157562 & 0.3539359 & NA & NA & NA\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
+\subsection{Model Estimation}
 
-\textbackslash{} \textcolor{red}{Interprete these results!}
-\textbackslash{}
-
-Now, let us turn to the first-difference transformations of the time
-series. \textbackslash{}
-
-\textbf{GDP}:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-5}Unit-root and stationarity tests for UK GDP}
-\centering
-\begin{tabular}[t]{lrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
-\midrule
-ADF & -8.0195142 & 0.01 & NA & NA & NA\\
-KPSS & 0.0864308 & 0.10 & NA & NA & NA\\
-ERS DF-GLS & -7.9411516 & NA & -1.62 & -1.94 & -2.57\\
-PP & -321.6127812 & 0.01 & NA & NA & NA\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-\textbf{Trade Balance}:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-6}Unit-root and stationarity tests for UK Trade Balance}
-\centering
-\begin{tabular}[t]{lrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
-\midrule
-ADF & -8.1714448 & 0.01 & NA & NA & NA\\
-KPSS & 0.0349289 & 0.10 & NA & NA & NA\\
-ERS DF-GLS & -12.9115650 & NA & -1.62 & -1.94 & -2.57\\
-PP & -300.0884288 & 0.01 & NA & NA & NA\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-\textbf{Exchange Rate}:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-7}Unit-root and stationarity tests for UK Exchange Rate}
-\centering
-\begin{tabular}[t]{lrrrrr}
-\toprule
-\multicolumn{1}{c}{ } & \multicolumn{2}{c}{ADF} & \multicolumn{1}{c}{KPSS} \\
-\cmidrule(l{3pt}r{3pt}){2-3} \cmidrule(l{3pt}r{3pt}){4-4}
-test & statistic & p.value & crit\_10pct & crit\_5pct & crit\_1pct\\
-\midrule
-ADF & -5.0408902 & 0.01 & NA & NA & NA\\
-KPSS & 0.0837118 & 0.10 & NA & NA & NA\\
-ERS DF-GLS & -2.1882524 & NA & -1.62 & -1.94 & -2.58\\
-PP & -82.8852407 & 0.01 & NA & NA & NA\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-\subsection*{Part 3: Model Estimation}
+Next, we proceed to the model estimation. 
 
 \textbf{GDP}: For the GDP, we use the stationary first-differenced data.
 Our tests suggest an ARIMA(1,0,4) process:
@@ -383,7 +340,7 @@ ar1 & 0.2592112 & 0.0921888\\
 \end{tabular}
 \endtable\egroup
 
-\subsection*{Part 4 - Forecasting}
+\subsection{Forecasting}
 
 \textcolor{red}{We should probably focus on one series in the final report, I'll just include all so you can decide}
 
@@ -485,9 +442,9 @@ The forecast of the GDP series is:
 \caption{Exchange Rate - Forecast}\label{fig:unnamed-chunk-20}
 \end{figure}
 
-\section*{Exercise 2 - Multivariate Analysis}
+\section{Multivariate Analysis}
 
-\subsection*{Part 1 - Lag selection}
+\subsection{Optimal lag selection}
 
 c.f. R script. Different tests suggest different lags as can be seen in
 the following table:
@@ -508,7 +465,7 @@ AIC(n) & HQ(n) & SC(n) & FPE(n)\\
 We decide to use a lag of 7, ensuring better forecasting fits at the
 expense of a loss of power.
 
-\subsection*{Part 2 - Residual testing}
+\subsection{Residual testing}
 
 The test statistics for the behavior of our residuals are summarized in
 the following table:
@@ -528,7 +485,7 @@ Normality & 7261.2574 & 6 & 0.0000000\\
 \end{tabular}
 \endtable\egroup
 
-\subsection*{Part 3 - VAR forecasts}
+\subsection{VAR forecasts}
 
 \textcolor{red}{We should probably also add an in-sample forecast as Idann and Kenan did?}
 
@@ -543,9 +500,11 @@ The VAR forecast of the first-differenced GDP is visualized by:
 \caption{GDP - VAR Forecast}\label{fig:unnamed-chunk-23}
 \end{figure}
 
-\subsection*{Part 4 - Cholesky decomposition}
+\subsection{Cholesky decomposition}
 
-\subsection*{Part 5 - Impulse response functions}
+\paragraph{Economic reasoning.}
+
+\subsection{Impulse response functions}
 
 The impulse response functions for GDP are depicted as:
 
@@ -580,7 +539,7 @@ The impulse response functions for Exchange Rate are depicted as:
 \caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-26}
 \end{figure}
 
-\subsection*{Part 6: Modify the ordering of the variables}
+\subsection{Modify the ordering of the variables}
 
 After modifying the ordering, the IRFs look as follows:
 
@@ -616,5 +575,7 @@ The impulse response functions for Exchange Rate are depicted as:
 
 \caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-29}
 \end{figure}
+
+\section{Concluding Remarks}
 
 \end{document}

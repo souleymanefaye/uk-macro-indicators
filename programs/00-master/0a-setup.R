@@ -7,8 +7,8 @@
 rm(list=ls())
 
 # set the WD to a new folder
-#root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
-root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
+root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
+#root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
 
 # subdirectories
 code <- file.path(root, "programs")
@@ -22,21 +22,7 @@ tables <- file.path(root, "tables")
 if (!requireNamespace("pacman", quietly = TRUE))
   install.packages("pacman")
 
-pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, dplyr)
-
-
-# libraries (manual method) 
-#library(readr)
-#library(lubridate)
-#library(tsibble)
-#library(patchwork)
-#library(tidyverse) 
-#library(zoo) # for quarter year type variables
-#library(vars) # package for selecting the optimal lag-order
-#library(urca) # package for testing unit roots
-#library(ggplot2)
-#library(tseries)   # For time series tests (adf.test, kpss.test)
-#library(forecast)  # For ARMA modeling and forecasting (auto.arima, forecast, Acf, Pacf)
+pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, dplyr, hpfilter, mFilter)
 
 # functions
 # we write down a function to perform tests
@@ -137,8 +123,8 @@ tidy_test <- function(obj, test_name) {
 rm(list=ls())
 
 # set the WD to a new folder
-#root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
-root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
+root <- setwd("~/Documents/Projects/R/FG2025-uk-macro-indicators") # Souley's path
+#root <- setwd("C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators") # Gereon's path
 
 # subdirectories
 code <- file.path(root, "programs")
@@ -152,7 +138,7 @@ tables <- file.path(root, "tables")
 if (!requireNamespace("pacman", quietly = TRUE))
   install.packages("pacman")
 
-pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr)
+pacman::p_load(tsibble, patchwork, tidyverse, zoo, vars, urca, tseries, forecast, broom, readr, hpfilter, mFilter)
 
 
 # libraries (manual method) 
