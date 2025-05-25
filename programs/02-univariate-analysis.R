@@ -159,13 +159,15 @@ erate_model <- identify_estimate_arma(erate_diff, "Exchange Rate (first-differen
 #---------------------- V - Forecast  ------------------------------------------
 
 cat("\n1.4 Forecasting (Example: GDP)...\n")
-# Define forecast horizon 
-h <- 20
 
+# Define reasonable forecast horizons
+h_gdp <- 8     # 2 years (8 quarters) for structural policy impacts
+h_bp <- 6       # 1.5 years (6 quarters) for trade cycle durations
+h_erate <- 4    # 1 year (4 quarters) FX volatility risk low
 # Generate forecasts from the selected model
-gdp_forecast <- forecast(gdp_model, h)
-erate_forecast <- forecast(erate_model, h)
-bp_forecast <- forecast(bp_model, h)
+gdp_forecast <- forecast(gdp_model, h = h_gdp)
+erate_forecast <- forecast(erate_model, h= h_bp)
+bp_forecast <- forecast(bp_model,  h=h_erate)
 
 #plot(gdp_forecast, main = "Forecasts for GDP from ARIMA(1,0,0) Model")
 #plot(exchange_rate_forecast, main = "Forecasts for Exchange Rate from ARIMA(2,0,0) Model")
@@ -219,6 +221,19 @@ acc_df  <- acc_mat |>
   tibble::rownames_to_column(var = "set")
 readr::write_csv(acc_df,
                  file.path(root, "tables", "Trade Balance_accuracy_metrics.csv"))
+
+png(filename = file.path(root, "figures/TradeBalance_fitted_vs_actual.png"), 
+    width = 1600, height = 900, res = 150)
+par(mfrow=c(1,1)) # Reset plot layout if needed
+plot(gdp_forecast$x, col = "black", ylab = "GDP Value", 
+     main = "GDP: Actual vs. In-sample Fitted Values",
+     ylim = range(c(gdp_forecast$x, fitted_values_gdp), na.rm = TRUE))
+lines(fitted_values_gdp, col = "blue", lty = 2)
+legend("topleft", legend = c("Actual GDP", "In-sample Fitted (ARIMA)"), col = c("black", "blue"), lty = c(1,2))
+cat("The plot above shows the original GDP series and the in-sample fitted values from the ARIMA model.\n")
+cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed above.\n")
+dev.off()        
+
 
 png(filename = file.path(root, "figures/Trade Balance_forecast.png"), 
     width = 1600, height = 900, res = 150)

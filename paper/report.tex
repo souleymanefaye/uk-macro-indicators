@@ -101,8 +101,9 @@
 \usepackage{siunitx}
 \usepackage{multirow}
   
-\title{Macroeconometrics - UK variables report}
-\author{Souleymane Faye \& Gereon Staratschek}
+\title{Term Project in Introduction to Econometrics of Time Series \\[1.5ex] 
+{\Large An analysis of the United Kingdom GDP, Trade Balance, and Exchange Rate, 1955-2024}}
+\author{Souleymane \textsc{Faye} \& Gereon \textsc{Staratschek}}
 \date{2025-05-24}
 
 \begin{document}
@@ -141,7 +142,7 @@ around the respective stationary mean.
 
 \begin{figure}[H]
 
-\caption{\large \textsc{Trends in GDP, trade balance, and exchange rate}}\label{fig:trends-plot}
+\caption{\large \textsc{Trends in GDP, Trade Balance, and Exchange Rate}}\label{fig:trends-plot}
 
 {\centering \includegraphics[width=0.8\linewidth]{../figures/uk_macro_levels_and_differences.png} 
 
@@ -245,99 +246,122 @@ of conclusions.
 
 \subsection{Model Estimation}
 
-Next, we proceed to the model estimation. 
+Next, we proceed to the model estimation.
 
-\textbf{GDP}: For the GDP, we use the stationary first-differenced data.
-Our tests suggest an ARIMA(1,0,4) process:
+\paragraph*{Statistical Models.}
 
-\begin{figure}
+Denote \( \nabla y_t = y_t - y_{t-1} \) the first-difference operator. We write
+down three statistical models to guide our analysis. The univariate trade balance MA (4) model writes
+\begin{equation}
+        \nabla tb_t = \theta_1 \epsilon_{t-1} + \theta_2 \epsilon_{t-2} + \theta_3 \epsilon_{t-3} + \theta_4 \epsilon_{t-4} + \epsilon_t
+    \end{equation}
+     where \( tb_t \) denotes trade balance and $(\epsilon_t)_{1,..., T}$ is the innovation process.
+    
+The exchange rate AR (1) model is 
+    \begin{equation}
+        \nabla e_t = \phi_1 \nabla y_{t-1} + \nu_t
+    \end{equation}
+     where \( e_t \) represents exchange rate and $(\nu_t)_{1,..., T}$ is the innovation process 
+The GDP univariate ARIMA (1,1,4) model with drift writes
+    \begin{equation}
+        \nabla y_t = c + \phi_1 \nabla y_{t-1} + \sum_{i=1}^4 \theta_i \gamma_{t-i} + \gamma_t
+    \end{equation}
+     where \( y_t \) is GDP and $(\gamma_t)_{1,..., T}$ is the innovation process.
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/GDP (first-differenced)_residuals} 
+\paragraph*{Estimation.} Table 2 shows the results of our estimations. We find that the Trade Balance 
+has significant MA terms at the 1\% level (\( \theta_1 = -0.775^{***},\ \theta_4 = 0.278^{***} \)) 
+indicate strong short- and long-lagged shock persistence. As for the exchange rate,
+The autoregressive term (\( \phi_1 = 0.259^{***} \)) suggests moderate persistence 
+in differenced exchange rate movements. GDP's key drivers include the AR(1)
+term (\( \phi_1 = 0.489^{**} \)) and MA terms (\( \theta_1 = -0.770^{***},\ 
+\theta_4 = -0.241^{***} \)), with a large intercept (\( c = 1832.987^{***} \)) 
+reflecting persistent upward drift. The models
+demonstrate heterogeneous dynamics: Trade balance exhibits complex error correction, 
+exchange rate shows momentum effects, and GDP combines trend persistence with 
+multi-period shock absorption. 
 
-}
-
-\caption{Model estimation - GDP}\label{fig:unnamed-chunk-8}
-\end{figure}
-
-The coefficients of the model are as follows:
-
-\bgroup \table[H]
+\begin{table}[htbp]
 \centering
-\caption{\label{tab:unnamed-chunk-9}Model coefficients GDP}
-\centering
-\begin{tabular}[t]{lrr}
-\toprule
-term & estimate & std.error\\
+\caption{\textsc{ARIMA Model Estimates}}
+\label{tab:arima}
+\small
+\begin{tabular}{@{} >{}l *{6}{S} @{}}
+\\[-1.8ex] \hline \hline \\[-1.8ex] 
+ & \multicolumn{2}{c}{Trade Balance} & \multicolumn{2}{c}{Exchange Rate} & \multicolumn{2}{c}{GDP} \\
+\cmidrule(l{5pt}r{5pt}){2-3} \cmidrule(l{5pt}r{5pt}){4-5} \cmidrule(l{5pt}r{5pt}){6-7}
+Component & {Coeff.} & {SE} & {Coeff.} & {SE} & {Coeff.} & {SE} \\
 \midrule
-ar1 & 0.4886750 & 0.2015697\\
-ma1 & -0.7703784 & 0.1988893\\
-ma2 & 0.0925464 & 0.0930497\\
-ma3 & 0.1352912 & 0.0747171\\
-ma4 & -0.2405810 & 0.0610664\\
-\addlinespace
-intercept & 1832.9872955 & 232.7539989\\
-\bottomrule
+
+AR(1)              & {--}          & {--}        & 0.259$^{***}$  & 0.092        & 0.489$^{**}$    & 0.202        \\
+\addlinespace[0.5em]
+MA(1)              & -0.775$^{***}$ & 0.057       & {--}           & {--}         & -0.770$^{***}$  & 0.199        \\
+\addlinespace[0.5em]
+MA(2)              & -0.100        & 0.074       & {--}           & {--}         & 0.093           & 0.093        \\
+\addlinespace[0.5em]
+MA(3)              & -0.030        & 0.080       & {--}           & {--}         & 0.135$^{*}$     & 0.075        \\
+\addlinespace[0.5em]
+MA(4)              & 0.278$^{***}$  & 0.064       & {--}           & {--}         & -0.241$^{***}$  & 0.061        \\
+\addlinespace[0.5em]
+Intercept          & {--}          & {--}        & {--}           & {--}         & 1832.987$^{***}$ & 232.754      \\
+
+\hline \hline \\[-1.8ex] 
 \end{tabular}
-\endtable\egroup
 
-\textbf{Trade Balance}: For the Trade Balance, we use the stationary
-level data. Our tests suggests an ARIMA(0,0,4) process:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../results/Trade Balance_residuals} 
-
-}
-
-\caption{Model estimation - Trade Balance}\label{fig:unnamed-chunk-10}
-\end{figure}
-
-The coefficients of the model are as follows:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-11}Model coefficients Trade Balance}
-\centering
-\begin{tabular}[t]{lrr}
-\toprule
-term & estimate & std.error\\
-\midrule
-ma1 & -0.7749122 & 0.0571450\\
-ma2 & -0.1000937 & 0.0735727\\
-ma3 & -0.0300321 & 0.0804010\\
-ma4 & 0.2784463 & 0.0640672\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
-
-\textbf{Exchange rate}: For the Exchange Rate, we use te stationary
-level data. Our tests suggests an ARIMA(1,0,0) process:
-
-\begin{figure}
-
-{\centering \includegraphics[width=0.8\linewidth]{../results/Exchange Rate_residuals} 
-
-}
-
-\caption{Model estimation - Exchange Rate}\label{fig:unnamed-chunk-12}
-\end{figure}
-
-The coefficients of the model are as follows:
-
-\bgroup \table[H]
-\centering
-\caption{\label{tab:unnamed-chunk-13}Model coefficients Exchange Rate}
-\centering
-\begin{tabular}[t]{lrr}
-\toprule
-term & estimate & std.error\\
-\midrule
-ar1 & 0.2592112 & 0.0921888\\
-\bottomrule
-\end{tabular}
-\endtable\egroup
+\vspace{0.4cm}
+\begin{minipage}{\textwidth}
+\footnotesize
+\textit{Notes:} Coefficient estimates (Coeff.) with standard errors (SE). 
+{--} = Component not included in model. Significance levels: $^{***}p<0.01$, $^{**}p<0.05$, $^{*}p<0.1$. 
+AR = Autoregressive term, MA = Moving Average term. GDP intercept in original units. 
+\textit{Source:} Author's calculations using UK Statistical Office data.
+\end{minipage}
+\end{table}
 
 \subsection{Forecasting}
+
+Table 3 reports forecast accuracy 
+metrics for the first-differenced GDP, Trade Balance, and Exchange Rate series, 
+calculated on the training set. The GDP series exhibits large absolute errors,
+with a Root Mean Squared Error (RMSE) of 9,021.2 and a Mean Absolute Error (MAE)
+of 3,505.4, while its Mean Absolute Scaled Error (MASE) of 0.77 suggests 
+comparative performance relative to a benchmark. For the Trade Balance, the 
+RMSE of 4,513.0 and MAE of 2,255.2 are accompanied by undefined percentage 
+errors (MPE and MAPE), likely due to zero-crossings in the differenced series.
+The Exchange Rate demonstrates smaller-scale errors, with an RMSE of 0.035 and 
+MAE of 0.027, alongside percentage errors exceeding 100\%. Residual diagnostics
+show near-zero first-order autocorrelation (ACF1) across all series, ranging 
+from -0.003 for GDP to 0.006 for the Trade Balance. The MASE values, all below 
+1, indicate that the models improve upon a naive forecast. These metrics reflect
+the distinct scaling and volatility profiles of the macroeconomic series under study.
+
+\begin{table}[htbp]
+\centering
+\caption{\textsc{Forecast Accuracy Metrics for First-Differenced Series}}
+\label{tab:accuracy}
+\footnotesize
+\begin{tabular}{@{} l *{2}{S[table-format=-3.1]} S[table-format=4.1] S[table-format=-3.1] S[table-format=3.1] S[table-format=1.3] S[table-format=-1.3] @{}}
+\\[-1.8ex]\hline \hline \\[-1.8ex] 
+\textbf{Series} & \multicolumn{1}{c}{\textbf{ME}} & \multicolumn{1}{c}{\textbf{RMSE}} & \multicolumn{1}{c}{\textbf{MAE}} & \multicolumn{1}{c}{\textbf{MPE}} & \multicolumn{1}{c}{\textbf{MAPE}} & \multicolumn{1}{c}{\textbf{MASE}} & \multicolumn{1}{c}{\textbf{ACF1}} \\
+\midrule
+GDP & -30.6 & 9021.2 & 3505.4 & -106.5 & 452.6 & 0.770 & -0.003 \\[2.5ex] 
+Trade Balance & -196.1 & 4513.0 & 2255.2 & {--} & {--} & 0.686 & 0.006 \\[2.5ex] 
+Exchange Rate & -0.001 & 0.035 & 0.027 & 137.8 & 152.9 & 0.682 & -0.008 \\
+\hline \hline \\[-1.8ex] 
+\end{tabular}
+
+\vspace{0.2cm}
+\begin{minipage}{\textwidth}
+\scriptsize
+\textit{Notes:} All metrics calculated on training set. Scaling factors: 
+GDP RMSE/MAE in original units ($x10^{-3}$), Exchange Rate ME ($x10^{-3}$). 
+"{--}" indicates infinite values due to zero-base percentage calculations. 
+ME: Mean Error, RMSE: Root Mean Squared Error, MAE: Mean Absolute Error, 
+MPE: Mean Percentage Error, MAPE: Mean Absolute Percentage Error, 
+MASE: Mean Absolute Scaled Error, ACF1: Lag-1 Autocorrelation.
+
+\textit{Sources:} XX.
+\end{minipage}
+\end{table}
 
 \textcolor{red}{We should probably focus on one series in the final report, I'll just include all so you can decide}
 
@@ -348,7 +372,7 @@ figure:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/GDP_fitted_vs_actual} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/GDP_fitted_vs_actual} 
 
 }
 
@@ -374,7 +398,7 @@ The forecast of the GDP series is:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/GDP_forecast} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/GDP_forecast} 
 
 }
 
@@ -403,7 +427,7 @@ The forecast of the GDP series is:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/Trade Balance_forecast} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/Trade Balance_forecast} 
 
 }
 
@@ -432,7 +456,7 @@ The forecast of the GDP series is:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/Exchange Rate_forecast} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/Exchange Rate_forecast} 
 
 }
 
@@ -440,6 +464,8 @@ The forecast of the GDP series is:
 \end{figure}
 
 \section{Multivariate Analysis}
+
+\subsection{Theoretical framework}
 
 \subsection{Optimal lag selection}
 
@@ -490,7 +516,7 @@ The VAR forecast of the first-differenced GDP is visualized by:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/VAR_forecast2} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/VAR_forecast2} 
 
 }
 
@@ -499,15 +525,13 @@ The VAR forecast of the first-differenced GDP is visualized by:
 
 \subsection{Cholesky decomposition}
 
-\paragraph{Economic reasoning.}
-
 \subsection{Impulse response functions}
 
 The impulse response functions for GDP are depicted as:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.GDP} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.GDP} 
 
 }
 
@@ -518,7 +542,7 @@ The impulse response functions for Trade Balance are depicted as:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.balance.of.payments} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.balance.of.payments} 
 
 }
 
@@ -529,49 +553,49 @@ The impulse response functions for Exchange Rate are depicted as:
 
 \begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots/IRF_to_First.differenced.exchange.rate} 
+{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots/IRF_to_First.differenced.exchange.rate} 
 
 }
 
 \caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-26}
 \end{figure}
 
-\subsection{Modify the ordering of the variables}
+\subsection{Robustness analysis: modify the ordering of the variables}
 
 After modifying the ordering, the IRFs look as follows:
 
 The impulse response functions for GDP are depicted as:
 
-\begin{figure}
+%\begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.GDP} 
+%{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots2/IRF_to_First.differenced.GDP} 
 
-}
+%}
 
-\caption{GDP - Shock reactions}\label{fig:unnamed-chunk-27}
-\end{figure}
+%\caption{GDP - Shock reactions}\label{fig:unnamed-chunk-27}
+%\end{figure}
 
-The impulse response functions for Trade Balance are depicted as:
+%The impulse response functions for Trade Balance are depicted as:
 
-\begin{figure}
+%\begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.balance.of.payments} 
+%{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots2/IRF_to_First.differenced.balance.of.payments} 
 
-}
+%}
 
-\caption{Trade Balance - Shock reactions}\label{fig:unnamed-chunk-28}
-\end{figure}
+%\caption{Trade Balance - Shock reactions}\label{fig:unnamed-chunk-28}
+%\end{figure}
 
-The impulse response functions for Exchange Rate are depicted as:
+%The impulse response functions for Exchange Rate are depicted as:
 
-\begin{figure}
+%\begin{figure}
 
-{\centering \includegraphics[width=0.8\linewidth]{../results/IRF_plots2/IRF_to_First.differenced.exchange.rate} 
+%{\centering \includegraphics[width=0.8\linewidth]{../figures/IRF_plots2/IRF_to_First.differenced.exchange.rate} 
 
-}
+%}
 
-\caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-29}
-\end{figure}
+%\caption{Exchange Rate - Shock reactions}\label{fig:unnamed-chunk-29}
+%\end{figure}
 
 \section{Concluding Remarks}
 

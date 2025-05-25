@@ -23,7 +23,7 @@ chosen_lag <- lag_selection$selection["AIC(n)"]
 
 lags_df <- as.data.frame(t(lag_selection$selection))
 write.csv(lags_df,
-          file = file.path(root, "results", "lag_selection.csv"),
+          file = file.path(root, "figures", "lag_selection.csv"),
           row.names = FALSE)
 # --------------------- III - Model Estimation ---------------------------------
 cat("\n2.2 Estimating VAR model...\n")
@@ -75,7 +75,7 @@ norm_df <- data.frame(
 )
 
 all_diag <- bind_rows(serial_df, arch_df, norm_df)
-out_dir <- file.path(root, "results")
+out_dir <- file.path(root, "tables")
 write.csv(
   all_diag,
   file = file.path(out_dir, "VAR_diagnostics.csv"),
@@ -91,12 +91,12 @@ var_forecast <- predict(var_model, n.ahead = h_var, ci = 0.95) # 95% confidence 
 
 cat("Plotting VAR forecasts (Example: GDP)...\n")
 #
-png(filename = file.path(root, "results/VAR_forecast1.png"), 
+png(filename = file.path(root, "figures/VAR_forecast1.png"), 
     width = 1600, height = 900, res = 150)
 plot(var_forecast, names = colnames(var_data)[1])
 dev.off()
 #
-png(filename = file.path(root, "results/VAR_forecast2.png"), 
+png(filename = file.path(root, "figures/VAR_forecast2.png"), 
     width = 1600, height = 900, res = 150)
 fanchart(var_forecast, names = colnames(var_data)[1])
 dev.off()
@@ -117,7 +117,7 @@ cat("Plotting IRFs (Order 1)...\n")
 plot(irf_results_1)
 
 # Gereon's plots
-out_dir <- file.path(root, "results", "IRF_plots")
+out_dir <- file.path(root, "figures", "IRF_plots")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 # get the three impulse names
@@ -160,7 +160,7 @@ plot(irf_results_2)
 
 
 # Gereon's plots
-out_dir <- file.path(root, "results", "IRF_plots2")
+out_dir <- file.path(root, "figures", "IRF_plots2")
 dir.create(out_dir, recursive = TRUE, showWarnings = FALSE)
 
 # get the three impulse names

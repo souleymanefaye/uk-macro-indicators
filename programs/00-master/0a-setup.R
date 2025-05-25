@@ -100,49 +100,22 @@ tidy_test <- function(obj, test_name) {
   out
 }
 
-# We write down a function to select and estimate the best model
-identify_estimate_arma <- function(series, series_name) {
-  cat("\n--- Analyzing:", series_name, "---\n")
-  
-  target_series <- series 
-  
-  cat("Plotting ACF and PACF...\n")
-  par(mfrow=c(1,2))
-  Acf(target_series, main = paste("ACF for", series_name))
-  Pacf(target_series, main = paste("PACF for", series_name))
-  par(mfrow=c(1,1))
-  cat("Use ACF/PACF plots to suggest potential AR(p), MA(q), or ARMA(p,q) orders.\n")
-  
-  cat("\nEstimating models using auto.arima (AICc selection)...\n")
-  # auto.arima automatically selects the best ARMA model based on information criteria (AICc by default)
-  best_model <- auto.arima(target_series, stationary = TRUE, seasonal = FALSE, stepwise = FALSE, approximation = FALSE)
-  cat("Best model selected by auto.arima:\n")
-  print(summary(best_model))
-  cat("Information Criteria (AICc used for selection):\n")
-  print(best_model$aicc) # Can also check $aic, $bic
-  
-  cat("\nChecking residuals of the selected model...\n")
-  checkresiduals(best_model)
-  # Comment on the ACF/PACF plots and the model selected by auto.arima.
-  # Does the selected model make sense given the ACF/PACF? Are the residuals white noise?
-  return(best_model)
-}
-
-
-identify_estimate_arma_new <- function(series,
+identify_estimate_arma <- function(series,
                                    series_name,
-                                   out_dir = "results") {
+                                   out_dir1 = "figures",
+                                   out_dir2 = "tables") {
   
   ## ------------------------------------------------------------------
   ## 0.  House-keeping -------------------------------------------------
-  dir.create(out_dir, showWarnings = FALSE, recursive = TRUE)
+  dir.create(out_dir1, showWarnings = FALSE, recursive = TRUE)
+  dir.create(out_dir2, showWarnings = FALSE, recursive = TRUE)
   
   ## ------------------------------------------------------------------
   ## 1.  Exploratory ACF / PACF ---------------------------------------
   cat("\n--- Analyzing:", series_name, "---\n")
   cat("Plotting ACF and PACF …\n")
   
-  png(file = file.path(out_dir,
+  png(file = file.path(out_dir1,
                        paste0(series_name, "_ACF_PACF.png")),
       width = 1200, height = 600, res = 120)
   par(mfrow = c(1, 2))
@@ -172,7 +145,7 @@ identify_estimate_arma_new <- function(series,
   ## ------------------------------------------------------------------
   ## 3.  Save coefficient table ---------------------------------------
   coefs <- broom::tidy(best_model)          # coef, std.error, statistic, p.value
-  coef_file <- file.path(out_dir,
+  coef_file <- file.path(out_dir2,
                          paste0(series_name, "_ARMA_coefs.csv"))
   readr::write_csv(coefs, coef_file)
   cat("   → coefficient table written to",
@@ -181,7 +154,7 @@ identify_estimate_arma_new <- function(series,
   ## ------------------------------------------------------------------
   ## 4.  Residual diagnostics figure ----------------------------------
   cat("Creating residual-diagnostics plot …\n")
-  png(file = file.path(out_dir,
+  png(file = file.path(out_dir1,
                        paste0(series_name, "_residuals.png")),
       width = 1200, height = 800, res = 120)
   forecast::checkresiduals(best_model)
