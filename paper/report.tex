@@ -66,7 +66,7 @@
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{\textbf{2025-05-24}}
-\fancyhead[C]{\textbf{Econometrics Problem Set 2}}
+\fancyhead[C]{\textbf{Term Project in Econometrics of Time Series}}
 \fancyhead[R]{\textbf{Gereon Staratschek}}
 \fancyfoot[C]{\thepage}
 \usepackage{booktabs}
@@ -100,7 +100,6 @@
   \usepackage{booktabs}
 \usepackage{siunitx}
 \usepackage{multirow}
-\usepackage[skip=0.5ex]{caption}
   
 \title{Macroeconometrics - UK variables report}
 \author{Souleymane Faye \& Gereon Staratschek}
@@ -140,7 +139,7 @@ around a low, negative value. However, since the observed spikes are
 getting much bigger over time, we also see an increase in fluctuation
 around the respective stationary mean.
 
-\begin{figure}[]
+\begin{figure}[H]
 
 \caption{\large \textsc{Trends in GDP, trade balance, and exchange rate}}\label{fig:trends-plot}
 
@@ -180,8 +179,8 @@ analysis.
 
 Table 1 presents the results of unit root and stationarity tests for our variables of interest, 
 analyzed in both levels and first differences. The Augmented 
-Dickey-Fuller (ADF), Phillips-Perron (PP), and ERS DF-GLS tests evaluate the 
-null hypothesis of a unit root (non-stationarity), while the KPSS test assesses 
+Dickey-Fuller (ADF), Phillips-Perron (PP), and Elliott, Rothenberg and Stock (ERS DF-GLS) tests evaluate the 
+null hypothesis of a unit root (non-stationarity), while the Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test assesses 
 the null of stationarity. For GDP, the level series exhibits non-stationarity 
 across all tests (e.g., ADF p-value = 0.353, KPSS statistic = 4.732*), but its 
 first-differenced series shows strong evidence of stationarity (ADF statistic =
@@ -191,37 +190,35 @@ first differencing (ADF = -8.171*). The exchange rate shows mixed results in
 levels (e.g., ADF p-value = 0.418), but clear stationarity in differences
 (PP = -82.885***)
 
-\begin{table}[htbp]
+\begin{table}[!htbp]
 \centering
-\caption{Unit Root and Stationnary Test Results} 
+\caption{\textsc{Unit Root and Stationnary Test Results}}
 \label{tab:unit_root}
-\footnotesize
 \begin{tabular}{@{} l cccc @{}}
-\toprule
-\toprule
- & \multicolumn{4}{c}{\bfseries Test Statistics} \\
+\\[-1.8ex] \hline 
+\hline  \\[-1.8ex] 
+ & \multicolumn{4}{c}{Test Statistics} \\
 \cmidrule(lr){2-5}
-\textbf{Series/Test} & \textbf{ADF} & \textbf{PP} & \textbf{ERS DF-GLS} & \textbf{KPSS} \\
+Series/Test & ADF & PP & ERS DF-GLS & KPSS \\
 \midrule
 
-\multicolumn{5}{@{}l}{\textbf{Gross Domestic Product}} \\
+\multicolumn{5}{@{}l}{Gross Domestic Product} \\
 \cmidrule(lr){1-5}
 Levels & $-2.531^{}$ $(0.353)$ & $-21.533^{***}$ $(0.048)$ & $3.074$ & $4.732^{***}$ \\
 Differences & $-8.020^{***}$ $(0.010)$ & $-321.613^{***}$ $(0.010)$ & $-7.941^{***}$ & $0.086$ \\
 \addlinespace
 
-\multicolumn{5}{@{}l}{\textbf{Trade Balance}} \\
+\multicolumn{5}{@{}l}{Trade Balance} \\
 \cmidrule(lr){1-5}
 Levels & $-2.225^{}$ $(0.481)$ & $-157.415^{***}$ $(0.010)$ & $-0.672$ & $3.395^{***}$ \\
 Differences & $-8.171^{***}$ $(0.010)$ & $-300.088^{***}$ $(0.010)$ & $-12.912^{***}$ & $0.035$ \\
 \addlinespace
 
-\multicolumn{5}{@{}l}{\textbf{Exchange Rate}} \\
+\multicolumn{5}{@{}l}{Exchange Rate} \\
 \cmidrule(lr){1-5}
 Levels & $-2.382^{}$ $(0.418)$ & $-13.158$ $(0.354)$ & $-1.415$ & $1.754^{***}$ \\
 Differences & $-5.041^{***}$ $(0.010)$ & $-82.885^{***}$ $(0.010)$ & $-2.188$ & $0.084$ \\
-\bottomrule
-\bottomrule
+\hline \hline 
 \end{tabular}
 
 \vspace{0.2cm}

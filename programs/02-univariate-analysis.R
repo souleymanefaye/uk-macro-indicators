@@ -106,22 +106,16 @@ dev.off()
 cat("\n1.2 Unit Root & Stationarity Tests...\n")
 
 # use function defined in `programs/00-master/0a-setup.R`
-perform_tests(uk_data_ts[, "gdp"], "GDP")
-perform_tests(uk_data_ts[, "balance_payments"], "Trade Balance")
-perform_tests(uk_data_ts[, "exchange_rate"], "Exchange Rate")
 
 
-perform_tests_new(uk_data_ts[, "gdp", drop = TRUE], "GDP")
-perform_tests_new(uk_data_ts[, "balance_payments", drop = TRUE], "Trade Balance")
-perform_tests_new(uk_data_ts[, "exchange_rate", drop = TRUE], "Exchange Rate")
+perform_tests(uk_data_ts[, "gdp", drop = TRUE], "GDP")
+perform_tests(uk_data_ts[, "balance_payments", drop = TRUE], "Trade Balance")
+perform_tests(uk_data_ts[, "exchange_rate", drop = TRUE], "Exchange Rate")
 
-perform_tests(gdp_diff, "Differenced GDP")
-perform_tests(bp_diff, "Differenced Trade Balance")
-perform_tests(erate_diff, "Differenced Exchange Rate")
 
-perform_tests_new(gdp_diff, "GDP_diff", out_dir = "tables") 
-perform_tests_new(bp_diff, "Trade Balance_diff", out_dir = "tables") 
-perform_tests_new(erate_diff, "Exchange Rate_diff", out_dir = "tables") 
+perform_tests(gdp_diff, "GDP_diff", out_dir = "tables") 
+perform_tests(bp_diff, "Trade Balance_diff", out_dir = "tables") 
+perform_tests(erate_diff, "Exchange Rate_diff", out_dir = "tables") 
 
 # save stationary time series data
 uk_data_stationary <- cbind(
@@ -157,14 +151,9 @@ cat("\n1.3 ARMA Model Identification & Estimation...\n")
 
 # use function defined in "0a-setup.R"
 
-
 gdp_model <- identify_estimate_arma(gdp_diff, "GDP (first-differenced)")
-bp_model <- identify_estimate_arma(bp_diff, "Trade Balance")
-erate_model <- identify_estimate_arma(erate_diff, "Exchange Rate")
-
-gdp_model <- identify_estimate_arma_new(gdp_diff, "GDP (first-differenced)")
-bp_model <- identify_estimate_arma_new(bp_diff, "Trade Balance")
-erate_model <- identify_estimate_arma_new(erate_diff, "Exchange Rate")
+bp_model <- identify_estimate_arma(bp_diff, "Trade Balance (first-differenced)")
+erate_model <- identify_estimate_arma(erate_diff, "Exchange Rate (first-differenced)")
 
 
 #---------------------- V - Forecast  ------------------------------------------
@@ -192,9 +181,9 @@ acc_df  <- acc_mat |>
   as.data.frame() |>
   tibble::rownames_to_column(var = "set")
 readr::write_csv(acc_df,
-                 file.path(root, "results", "GDP_accuracy_metrics.csv"))
+                 file.path(root, "tables", "GDP_accuracy_metrics.csv"))
 
-png(filename = file.path(root, "results/GDP_fitted_vs_actual.png"), 
+png(filename = file.path(root, "figures/GDP_fitted_vs_actual.png"), 
     width = 1600, height = 900, res = 150)
 par(mfrow=c(1,1)) # Reset plot layout if needed
 plot(gdp_forecast$x, col = "black", ylab = "GDP Value", 
@@ -207,7 +196,7 @@ cat("Accuracy metrics (like RMSE, MAE) for the in-sample period are printed abov
 dev.off()        
 
 
-png(filename = file.path(root, "results/GDP_forecast.png"), 
+png(filename = file.path(root, "figures/GDP_forecast.png"), 
     width = 1600, height = 900, res = 150)
 cat("\nOut-of-sample forecasts for GDP:\n")
 # The `plot(forecast_object)` shows both historical data and out-of-sample forecasts.
@@ -229,9 +218,9 @@ acc_df  <- acc_mat |>
   as.data.frame() |>
   tibble::rownames_to_column(var = "set")
 readr::write_csv(acc_df,
-                 file.path(root, "results", "Trade Balance_accuracy_metrics.csv"))
+                 file.path(root, "tables", "Trade Balance_accuracy_metrics.csv"))
 
-png(filename = file.path(root, "results/Trade Balance_forecast.png"), 
+png(filename = file.path(root, "figures/Trade Balance_forecast.png"), 
     width = 1600, height = 900, res = 150)
 par(mfrow=c(1,1)) # Reset plot layout if needed
 plot(bp_forecast$x, col = "black", ylab = "Trade Balance (first-difference)", 
@@ -263,10 +252,10 @@ acc_df  <- acc_mat |>
   as.data.frame() |>
   tibble::rownames_to_column(var = "set")
 readr::write_csv(acc_df,
-                 file.path(root, "results", "Exchange Rate_accuracy_metrics.csv"))
+                 file.path(root, "tables", "Exchange Rate_accuracy_metrics.csv"))
 
 
-png(filename = file.path(root, "results/Exchange Rate_forecast.png"), 
+png(filename = file.path(root, "figures/Exchange Rate_forecast.png"), 
     width = 1600, height = 900, res = 150)
 par(mfrow=c(1,1)) # Reset plot layout if needed
 plot(erate_forecast$x, col = "black", ylab = "Average Sterling Exchange Rate (First-Differenced)", 
