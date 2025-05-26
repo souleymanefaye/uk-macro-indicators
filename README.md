@@ -4,9 +4,15 @@ Replication package for the Macroeconometrics homework by Souleymane Faye and Ge
 
 ## Overview
 
+This replication package includes a collection of code designed to generate results
+
 ## Data
 
+We avail ourselves of the UK Statistical Office Data. 
+
 ## Computational requirements
+
+-
 
 ## Description of programs
 
@@ -28,6 +34,10 @@ Replication package for the Macroeconometrics homework by Souleymane Faye and Ge
 
 ### Programs features
 
+-
+
 ## List of tables and programs
+
+-
 
 ## References

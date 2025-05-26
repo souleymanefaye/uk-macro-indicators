@@ -134,7 +134,7 @@
 	financial events such as the Global Financial Crisis (GFC) in 2007, the
 	Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the
 	COVID-19 pandemic from 2020-2022. Section 2 presents the univariate analysis,
-	while section 3 focuses on the multivariate analysis. Section 4 briefly concludes.
+	while Section 3 focuses on the multivariate analysis. Section 4 briefly concludes.
 	
 	\section{Univariate Analysis}
 	
@@ -157,7 +157,7 @@
 	getting much bigger over time, we also see an increase in fluctuation
 	around the respective stationary mean.
 	
-	\begin{figure}[H]
+	\begin{figure}[]
 		\caption{\large \textsc{Trends in GDP, Trade Balance, and Exchange Rate}}\label{fig:trends-plot}
 		
 		{\centering \includegraphics[width=0.8\linewidth]{../figures/uk_macro_levels_and_differences.png} 
@@ -256,7 +256,7 @@
 	We highlight that first-differencing effectively mitigates
 	non-stationarity, as evidenced by statistically significant rejections of
 	unit root hypotheses (***p<0.01) and failure to reject KPSS stationarity for 
-	differenced series.These results justify the use of differenced series for subsequent analysis, 
+	differenced series. These results justify the use of differenced series for subsequent analysis, 
 	ensuring compliance with the stationarity assumptions underlying any further 
 	econometric treatment. Critical values and p-values are reported to validate the robustness
 	of conclusions.
@@ -376,7 +376,7 @@
 			MPE: Mean Percentage Error, MAPE: Mean Absolute Percentage Error, 
 			MASE: Mean Absolute Scaled Error, ACF1: Lag-1 Autocorrelation.
 			
-			\textit{Sources:} XX.
+			\textit{Sources:} Author's calculations using data from the UK Statistical Office..
 		\end{minipage}
 	\end{table}
 	
@@ -436,7 +436,7 @@
 		
 		\begin{minipage}{\textwidth}
 			\scriptsize
-			\textit{Notes}: XX.
+			\textit{Notes}: This figure show the out-of- and in-sample forecast performance for the univariate ARIMA models of our three variables.
 			
 			\textit{Source}: Author's calculations using data from the UK Statistical Office.
 		\end{minipage}
@@ -453,7 +453,7 @@
 	
 	\section{Multivariate Analysis}
 	
-	Note, a quick theoretical framework can be found in Appendix \ref{app}.
+To guide our empirical analysis, we adopt a theoretical model of the GDP, exchange rate and trade balance that can be found in appendix section \ref{app}.
 	
 	\subsection{Optimal lag selection}
 	
@@ -659,6 +659,12 @@
 			Normality (Jarque-Bera) & 7261.26 & 6 & <0.001 \\
 			\hline \hline  \\
 		\end{tabular}
+			\begin{minipage}{\textwidth}
+			\footnotesize
+			\textit{Notes:} This table presents residual testing for our VAR model. The Portmanteau tests for serial correlation (H0: no autocorrelation),
+			the ARCH effects tests for heteroskedasticity (H0: Absence of ARCH effects), and the Jarque-Bera tests for normality of residuals (H0: normality).
+			\textit{Source:} Author's calculations using UK Statistical Office data.
+		\end{minipage}
 	\end{table}
 	
 	\begin{assumption}[Refinement on the Error Term Structure]\label{assump:errors}
@@ -830,7 +836,7 @@
 	convergence of all variables toward zero underscores the stationarity of our 
 	VAR specification, as shocks dissipate without permanent effects.
 	
-	\subsection{Robustness analysis: modify the ordering of the variables}
+	\subsection{Robustness analysis: modifying the ordering of the variables}
 	
 	Figure \ref{fig:irf2} presents the impulse response functions (IRFs) derived from our VAR model, 
 	under an alternative Cholesky ordering
@@ -922,7 +928,7 @@
 	
 	In terms of limitations, our work exhibits sensitivity to VAR ordering and potential overfitting. 
 	To extend the analysis, we could have integrated structural VARs with long-run restrictions, or machine 
-	learning methods to improve accuracy.
+	learning methods to improve predicitive accuracy.
 	
 	\newpage
 	
@@ -937,12 +943,11 @@
 	This section develops a theoretical framework to analyze the dynamic interactions 
 	among GDP, exchange rates, and trade balance in the UK from 1955 to 2024, incorporating 
 	the COVID-19 pandemic (2020--2021) and Brexit (2016--2024) as exogenous shocks. 
-	The model synthesizes New Keynesian open-economy dynamics %\citep{gali2005}
-	, financial frictions
-	%\citep{cespedes2004}
-	, Mundell-Fleming trilemma constraints %\citep{mundell1963,fleming1962}
+	The model synthesizes New Keynesian open-economy dynamics (Gali, 2005)
+	, financial frictions (Cespedes, 2004)
+	, Mundell-Fleming trilemma constraints (Mundell 1963, Fleming 1962)
 	, 
-	and enhanced exchange rate pass-through %\citep{obstfeld1995}
+	and enhanced exchange rate pass-through (Obstfeld, 1995)
 	. It provides a foundation for 
 	Vector Autoregression (VAR) analysis by proposing a Cholesky ordering that reflects theoretical causality.
 	Table \ref{tab:notations} summarizes the model’s variables and assumptions.
@@ -974,7 +979,7 @@
 	
 	The model comprises six core equations, derived below with explicit integration of COVID-19 and Brexit shocks.
 	
-	\paragraph*{New-Keynesian IS curve} \\
+	\paragraph*{New-Keynesian IS curve.} 
 	
 	Log-linearizing the household Euler equation links output to its expected future value and the gap between the real policy rate and the natural rate. Decomposing aggregate demand by steady-state expenditure shares, investment is allowed to fall with the interest rate and Brexit uncertainty. Adding open-economy terms introduces the expected change in the real exchange rate and foreign output, while fiscal spending enters with a (potentially larger) multiplier under fixed exchange rates. Two additive shocks capture demand losses from COVID-19 and Brexit, yielding
 	
@@ -988,7 +993,8 @@
 		- \delta^{\mathrm{BRX}}\tau_t^{\mathrm{BRX}}.
 	\end{equation}
 	
-	\paragraph*{New-Keynesian Phillips Curve}
+	\paragraph*{New-Keynesian Phillips Curve.}
+	
 	Calvo pricing implies that only a share \(1-\theta\) of firms can reset prices each period.
 	\footnote{The remaining share \(\theta\) keep their prices fixed, generating nominal rigidity.} \\
 	Log-linearising the optimal pricing condition and the aggregate price index yields a forward-looking Phillips curve. \\
@@ -1009,7 +1015,7 @@
 	The coefficients \(\lambda\) and \(\nu\) quantify real-exchange-rate and pass-through effects, while \(\gamma^{\mathrm{COV}}\) and \(\gamma^{\mathrm{BRX}}\) capture the inflationary impact of pandemic-related supply constraints and Brexit-induced trade frictions.
 	
 	
-	\paragraph*{Trade‐Balance Equation}%
+	\paragraph*{Trade‐Balance Equation.}
 	Exports and imports depend on the real exchange rate and foreign–domestic demand: log‐linearising \(X_t=(Q_t)^{-\eta_x}Y_t^{*}\) and \(M_t=(Q_t)^{\eta_m}Y_t\) gives \(tb_t=\eta_x q_t+\gamma_y y_t^{*}-\gamma_m y_t\). \\
 	Allowing for a J-curve lag and exchange-rate pass-through, and adding COVID-19 trade disruptions and Brexit-related EU trade losses, yields
 	\begin{equation}
@@ -1024,9 +1030,8 @@
 	\end{equation}
 	where \(\gamma_x=\eta_x\), \(\phi\in(0,1)\) captures the J-curve, \(\chi\) measures pass-through, and the \(\psi\)-coefficients quantify pandemic and Brexit shocks to net exports.
 	
-	\paragraph{Exchange-Rate Dynamics}
-	Under a fixed‐exchange‐rate regime (e.g.\ pre-1992 ERM membership), the nominal rate is constant at its peg \(\bar{E}\).%
-	For floating regimes, uncovered-interest parity—augmented with a risk premium \(\rho_t\) and short-run deviations \(\psi_t\)—links the spot rate to expected future depreciation:
+	\paragraph*{Exchange-Rate Dynamics.}
+	Under a fixed‐exchange‐rate regime (e.g.\ pre-1992 ERM membership), the nominal rate is constant at its peg \(\bar{E}\). For floating regimes, uncovered-interest parity—augmented with a risk premium \(\rho_t\) and short-run deviations \(\psi_t\)—links the spot rate to expected future depreciation:
 	\[
 	E_t\,=\,
 	E_t E_{t+1}\,\frac{1+r_t}{1+r_t^{*}+\rho_t}\;+\;\psi_t.
@@ -1044,7 +1049,7 @@
 	\end{equation}
 	Here \(r_t\) and \(r_t^{*}\) denote domestic and foreign policy rates, while \(\rho_t\) captures the risk premium consistent with the exchange-rate trilemma.
 	
-	\paragraph*{Balance Sheet Effects}
+	\paragraph*{Balance Sheet Effects.}
 	
 	Investment faces financial frictions.
 	
@@ -1065,7 +1070,7 @@
 		\label{eq:bs}
 	\end{equation}
 	
-	\paragraph*{Monetary Policy}
+	\paragraph*{Monetary Policy.}
 	
 	The central bank sets the interest rate. Fixed regimes
 	
@@ -1093,13 +1098,10 @@
 	\paragraph*{Implications for our analysis.} 
 	The framework suggests the VAR ordering: 
 	\( \xi_t^{COV} \rightarrow \tau_t^{BRX} \rightarrow E_t \rightarrow \pi_t \rightarrow y_t \rightarrow TB_t \rightarrow r_t \), reflecting:
-	an exogenous, temporary COVID-19 shock %\citep{ons2023}.
-	, A persistent and structural Brexit shock %\citep{obr2025}.
-	, fixed exchange rate %\citep{dornbusch1976,mundell1963}.
-	, inflation transmits shocks,% \citep{obstfeld1995}.
-	output is affected by shocks,% \citep{fleming1962}.
-	trade balance is endogenous,% \citep{backus1994}.
-	and interest rate is constrained or reactive.% \citep{taylor1993}.
+	an exogenous, temporary COVID-19 shock (Office for National Statistics, 2023), A 
+	persistent and structural Brexit shock (Office for Budget Responsibility, 2025), fixed exchange rate (Dornbusch 1976, Mundell 1963),
+	 inflation transmits shocks (Obstfeld, 1995), output is affected by shocks Fleming, 1962), trade balance is endogenous (backus1994),
+	and interest rate is constrained or reactive (Taylor, 1993).
 	
 	
 	
