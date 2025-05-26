@@ -1,0 +1,427 @@
+---
+title: "Macroeconometrics - UK variables report"
+author: "Souleymane Faye & Gereon Staratschek"
+date: "`r Sys.Date()`"
+output: 
+  pdf_document:
+    latex_engine: xelatex  # Use a more Unicode-friendly engine
+    keep_tex: true         # Keep the .tex file for debugging
+    number_sections: true  # Optional: adds numbered sections
+header-includes:
+  - \usepackage{caption}
+  - \usepackage{subcaption}
+  - \usepackage{multirow}
+  - \usepackage{float}
+  - \restylefloat{table}
+  - \let\oldtable\table
+  - \let\endoldtable\endtable
+  - \renewenvironment{table}[1][H]{\oldtable[H]}{\endoldtable}
+  - \usepackage{fancyhdr}
+  - \pagestyle{fancy}
+  - \fancyhf{}
+  - \fancyhead[L]{\textbf{`r Sys.Date()`}}
+  - \fancyhead[C]{\textbf{Econometrics Problem Set 2}}
+  - \fancyhead[R]{\textbf{Gereon Staratschek}}
+  - \fancyfoot[C]{\thepage}
+always_allow_html: yes
+---
+
+```{r, include = F}
+
+# load—and, if needed, install—the full set of packages in one call
+pacman::p_load(
+  tidyverse, knitr, kableExtra, stargazer, tinytex, lmtest, nlme,
+  haven, vtable, jtools, gridExtra, sandwich, pander, readxl,
+  ggplot2, dplyr, rmarkdown, huxtable, lubridate, forcats, ggthemes,
+  broom, scales, sf, jsonlite, foreign, stringr, gdata, readr
+)
+
+# set the WD to a new folder
+#root <- "~/Documents/Projects/R/FG2025-uk-macro-indicators" # Souley's path
+root <- "C:/A Eigene Ordner/Studium/Paris School of Economics/M1/Courses/Econometrics 2b/Homework/uk-macro-indicators" # Gereon's path
+setwd(root)
+```
+
+
+\section*{Preliminaries}
+
+In this project, we aim to analyze the development of the Gross Domestic Product (GDP), exchange rates, and trade balance of the United Kingdom (UK). We collect our data from the OECD open data portal. We use data on a quarterly basis, starting latest in 1997. This period covers important financial events such as the Global Financial Crisis (GFC) in 2007, the Brexit referendum in 2016 and UK's final EU leave in 2020 as well as the COVID-19 pandemic from 2020-2022.
+
+\section*{Exercise 1 -  Univariate Analysis}
+
+\subsection*{Part 1: Analyzing the time series in levels}
+
+
+Looking at the plain time series data and analyzing the plots, we get the following results:
+
+
+```{r resid-plot, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Residual diagnostics from ARIMA(1,0,4)."}
+knitr::include_graphics(file.path(root, "figures/uk_levels_base_plot.png"))
+```
+
+\textbf{GDP}: Data on UK's GDP is available on a quarterly basis starting in 1955. GDP exhibits a clear, upwards trend with only a few shocks (such as the 2020 COVID-19 oandemic or the 2007 financial crisis) interrupting the general trend. Hence, the GDP of the UK is clearly not stationary. However, the trend seems to be linear, suggesting that the first-differences time series of the GDP might be stationary. \\
+
+\textbf{Trade Balance}: As GDP, data on the trade balance is available on a quarterly basis starting in 1955. We see that the trade balance fluctuates around 0 until the 1990s where a negative trend seems to set in continueing until the 2010s, when trade balance starts fluctuating around a low, negative value. However, since the observed spikes are getting much bigger over time, we also see an increase in fluctuation around the respective stationary mean. Hence, the data seems to be stationary in the beginning and in the end with a negative trend being observed between the 1990s and the 2010s. \\
+
+\textbf{Exchange Rate}: Data on the exchange rate is available since 1997 on a quarterly basis. It exhibits stationarity between 1997 and 2007, as well as from 2007 onwards. In 2007, a shock seems to have shifted the mean of the stationary process downwards.
+
+
+\subsection*{Part 2: Conducting unit roots and stationarity tests}
+
+In this section, we aim to formally conduct stationarity tests for the series. As explained in the last section, we have reason to doubt that our series are entirely stationary. However, for our analysis, we are relying on stationarity properties of the series. Hence, after identifying the non-stationary series formally, we will conduct the first-difference transformation to obtain stationary series for our analysis.\\
+
+Starting with the non-transformed series, we run a series of tests for each time series separately (\textcolor{red}{Explain the type of tests here!}) \\
+
+\textbf{GDP}: 
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/GDP_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+
+```
+
+\textbf{Trade Balance}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/Trade Balance_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+
+\textbf{Exchange Rate}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "tables/Exchange Rate_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+ \\
+ \textcolor{red}{Interprete these results!} \\
+ 
+Now, let us turn to the first-difference transformations of the time series. \\
+
+
+
+\textbf{GDP}: 
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/GDP_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+
+```
+
+\textbf{Trade Balance}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/Trade Balance_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK Trade Balance"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+
+\textbf{Exchange Rate}:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/tables/Exchange Rate_diff_unitroot_tests.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Unit-root and stationarity tests for UK Exchange Rate"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) |> 
+  kableExtra::add_header_above(         
+    c(" " = 1, "ADF" = 2, "KPSS" = 1)
+  )
+```
+
+
+\subsection*{Part 3: Model Estimation}
+
+\textbf{GDP}: For the GDP, we use the stationary first-differenced data. Our tests suggest an ARIMA(1,0,4) process:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Model estimation - GDP"}
+knitr::include_graphics(file.path(root, "results/GDP (first-differenced)_residuals.png"))
+```
+
+The coefficients of the model are as follows:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/GDP (first-differenced)_ARMA_coefs.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Model coefficients GDP"
+) |>
+  kableExtra::kable_classic(full_width = FALSE) 
+```
+
+\textbf{Trade Balance}: For the Trade Balance, we use the stationary level data. Our tests suggests an ARIMA(0,0,4) process:
+  
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Model estimation - Trade Balance"}
+knitr::include_graphics(file.path(root, "results/Trade Balance_residuals.png"))
+```
+
+
+The coefficients of the model are as follows:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/Trade Balance_ARMA_coefs.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Model coefficients Trade Balance"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+\textbf{Exchange rate}: For the Exchange Rate, we use te stationary level data. Our tests suggests an ARIMA(1,0,0) process:
+  
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Model estimation - Exchange Rate"}
+knitr::include_graphics(file.path(root, "results/Exchange Rate_residuals.png"))
+```
+
+
+The coefficients of the model are as follows:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/Exchange Rate_ARMA_coefs.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Model coefficients Exchange Rate"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+
+\subsection*{Part 4 - Forecasting}
+
+\textcolor{red}{We should probably focus on one series in the final report, I'll just include all so you can decide}
+
+\textbf{GDP}
+
+The fit of the in-sample GDP prediction is shown in the following figure:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - in-sample prediction"}
+knitr::include_graphics(file.path(root, "results/GDP_fitted_vs_actual.png"))
+```
+
+The formal measures of the fit are estimated as: 
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/GDP_accuracy_metrics.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "GDP - accuracy metrics"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+The forecast of the GDP series is:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - Forecast"}
+knitr::include_graphics(file.path(root, "results/GDP_forecast.png"))
+```
+
+\textbf{Trade Balance}:
+
+The in-sample fit of the Trade Balance is described by the following metrics:
+
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/Trade Balance_accuracy_metrics.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Trade Balance - accuracy metrics"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+The forecast of the GDP series is:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - Forecast"}
+knitr::include_graphics(file.path(root, "results/Trade Balance_forecast.png"))
+```
+
+
+\textbf{Exchange Rate}:
+
+The in-sample fit of the Trade Balance is described by the following metrics:
+
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/Exchange Rate_accuracy_metrics.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Exchange Rate - accuracy metrics"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+The forecast of the GDP series is:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Exchange Rate - Forecast"}
+knitr::include_graphics(file.path(root, "results/Exchange Rate_forecast.png"))
+```
+
+
+\section*{Exercise 2 - Multivariate Analysis}
+
+\subsection*{Part 1 - Lag selection}
+
+c.f. R script. Different tests suggest different lags as can be seen in the following table:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/lag_selection.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Lag selection"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+We decide to use a lag of 7, ensuring better forecasting fits at the expense of a loss of power.
+
+\subsection*{Part 2 - Residual testing}
+
+The test statistics for the behavior of our residuals are summarized in the following table:
+
+```{r, echo = FALSE, message = FALSE}
+results <- read_csv(file.path(root, "results/VAR_diagnostics.csv"))
+
+knitr::kable(
+  results,
+  format    = "latex",          
+  booktabs  = TRUE,           
+  caption   = "Residuals tests"
+) |>
+  kableExtra::kable_classic(full_width = FALSE)
+```
+
+\subsection*{Part 3 - VAR forecasts}
+
+\textcolor{red}{We should probably also add an in-sample forecast as Idann and Kenan did?}
+
+The VAR forecast of the first-differenced GDP is visualized by:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - VAR Forecast"}
+knitr::include_graphics(file.path(root, "results/VAR_forecast2.png"))
+```
+
+
+\subsection*{Part 4 - Cholesky decomposition}
+
+
+\subsection*{Part 5 - Impulse response functions}
+
+The impulse response functions for GDP are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots/IRF_to_First.differenced.GDP.png"))
+```
+
+The impulse response functions for Trade Balance are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Trade Balance - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots/IRF_to_First.differenced.balance.of.payments.png"))
+```
+
+
+
+The impulse response functions for Exchange Rate are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Exchange Rate - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots/IRF_to_First.differenced.exchange.rate.png"))
+```
+
+
+\subsection*{Part 6: Modify the ordering of the variables}
+
+After modifying the ordering, the IRFs look as follows:
+
+The impulse response functions for GDP are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "GDP - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots2/IRF_to_First.differenced.GDP.png"))
+```
+
+The impulse response functions for Trade Balance are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Trade Balance - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots2/IRF_to_First.differenced.balance.of.payments.png"))
+```
+
+
+
+The impulse response functions for Exchange Rate are depicted as:
+
+```{r, echo = FALSE, out.width = "80%", fig.align = "center",fig.cap = "Exchange Rate - Shock reactions"}
+knitr::include_graphics(file.path(root, "results/IRF_plots2/IRF_to_First.differenced.exchange.rate.png"))
+```
+
