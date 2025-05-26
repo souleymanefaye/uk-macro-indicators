@@ -224,7 +224,6 @@ for (imp in impulses) {
   message("Wrote ", fn)
 }
 
-# ------------------- VII - Blanchard Quah long run restrictions ---------------
 
 
 

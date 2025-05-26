@@ -9,9 +9,3 @@
 dir.create(file.path(root, "figures"), showWarnings = FALSE)
 dir.create(file.path(root, "tables"), showWarnings = FALSE)
 dir.create(file.path(root, "work-data"), showWarnings = FALSE)
-
-# Run the codes in the right order
-source(file.path(root, "programs/01-import.R"))
-source(file.path(root, "programs/02-univariate-analysis.R"))
-source(file.path(root, "programs/03-multivariate-analysis.R"))
-

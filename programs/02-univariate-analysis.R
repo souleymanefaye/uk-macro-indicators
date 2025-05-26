@@ -176,6 +176,8 @@ bp_forecast <- forecast(bp_model,  h=h_erate)
 cat("In-sample performance for GDP:\n")
 
 fitted_values_gdp <- fitted(gdp_forecast)
+fitted_values_bp <- fitted(bp_forecast)
+fitted_values_erate <- fitted(erate_forecast)
 
 print(accuracy(gdp_forecast))
 acc_mat <- accuracy(gdp_forecast)
